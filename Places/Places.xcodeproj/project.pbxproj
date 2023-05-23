@@ -12,6 +12,7 @@
 		17C52C2A2A1D50800066BEDE /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C292A1D50800066BEDE /* Place.swift */; };
 		17C52C2C2A1D51740066BEDE /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2B2A1D51740066BEDE /* Location.swift */; };
 		17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */; };
+		17C52C342A1D63650066BEDE /* GooglePlacesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +32,7 @@
 		17C52C292A1D50800066BEDE /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		17C52C2B2A1D51740066BEDE /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesLoader.swift; sourceTree = "<group>"; };
+		17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 		17C52C132A1D50560066BEDE /* Places */ = {
 			isa = PBXGroup;
 			children = (
+				17C52C322A1D63460066BEDE /* Places API */,
 				17C52C302A1D55100066BEDE /* Places Feature */,
 			);
 			path = Places;
@@ -94,6 +97,14 @@
 				17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */,
 			);
 			path = "Places Feature";
+			sourceTree = "<group>";
+		};
+		17C52C322A1D63460066BEDE /* Places API */ = {
+			isa = PBXGroup;
+			children = (
+				17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */,
+			);
+			path = "Places API";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,6 +219,7 @@
 				17C52C2C2A1D51740066BEDE /* Location.swift in Sources */,
 				17C52C2A2A1D50800066BEDE /* Place.swift in Sources */,
 				17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */,
+				17C52C342A1D63650066BEDE /* GooglePlacesLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
