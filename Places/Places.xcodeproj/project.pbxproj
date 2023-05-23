@@ -12,6 +12,7 @@
 		17C52C202A1D50560066BEDE /* Places.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C52C142A1D50560066BEDE /* Places.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17C52C2A2A1D50800066BEDE /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C292A1D50800066BEDE /* Place.swift */; };
 		17C52C2C2A1D51740066BEDE /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2B2A1D51740066BEDE /* Location.swift */; };
+		17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +32,7 @@
 		17C52C1E2A1D50560066BEDE /* PlacesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesTests.swift; sourceTree = "<group>"; };
 		17C52C292A1D50800066BEDE /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		17C52C2B2A1D51740066BEDE /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				17C52C142A1D50560066BEDE /* Places.h */,
 				17C52C292A1D50800066BEDE /* Place.swift */,
 				17C52C2B2A1D51740066BEDE /* Location.swift */,
+				17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */,
 			);
 			path = Places;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 			files = (
 				17C52C2C2A1D51740066BEDE /* Location.swift in Sources */,
 				17C52C2A2A1D50800066BEDE /* Place.swift in Sources */,
+				17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
