@@ -60,6 +60,21 @@ class GooglePlacesLoaderTests: XCTestCase {
     
     // MARK - Helpers
     
+    private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: GooglePlacesLoader, client: HTTPClientSpy) {
+        let client = HTTPClientSpy()
+        let sut = GooglePlacesLoader(url: url, client: client)
+        return (sut, client)
+    }
+    
+    private func expect(_ sut: GooglePlacesLoader, toCompleteWithError error: GooglePlacesLoader.Error, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        var capturedError = [GooglePlacesLoader.Error]()
+        sut.load { capturedError.append($0) }
+        
+        action()
+        
+        XCTAssertEqual(capturedError, [error], file: file, line: line)
+    }
+    
     private class HTTPClientSpy: HTTPClient {
         private var messages = [(url: URL, completion: ((HTTPClientResult) -> Void))]()
         
@@ -83,20 +98,5 @@ class GooglePlacesLoaderTests: XCTestCase {
                 headerFields: nil)!
             messages[index].completion(.success((data, response)))
         }
-    }
-    
-    private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: GooglePlacesLoader, client: HTTPClientSpy) {
-        let client = HTTPClientSpy()
-        let sut = GooglePlacesLoader(url: url, client: client)
-        return (sut, client)
-    }
-    
-    private func expect(_ sut: GooglePlacesLoader, toCompleteWithError error: GooglePlacesLoader.Error, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
-        var capturedError = [GooglePlacesLoader.Error]()
-        sut.load { capturedError.append($0) }
-        
-        action()
-        
-        XCTAssertEqual(capturedError, [error], file: file, line: line)
     }
 }
