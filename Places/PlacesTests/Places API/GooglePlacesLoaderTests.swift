@@ -32,7 +32,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(.connectivity), when: {
+        expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.connectivity), when: {
             let clientError = NSError(domain: "Test", code: 0)
             client.complete(with: clientError)
         })
@@ -43,7 +43,7 @@ class GooglePlacesLoaderTests: XCTestCase {
 
         let samples =  [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, code in
-            expect(sut, toCompleteWith: .failure(.invalidData), when: {
+            expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.invalidData), when: {
                 let json = makePlacesJSON([])
                 client.complete(withStatusCode: code, data:json, at: index)
             })
@@ -53,7 +53,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(.invalidData), when: {
+        expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.invalidData), when: {
             let invalidJSON = Data("INVALID JSON".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
         })
@@ -139,13 +139,26 @@ class GooglePlacesLoaderTests: XCTestCase {
         return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    private func expect(_ sut: GooglePlacesLoader, toCompleteWith result: GooglePlacesLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
-        var capturedResults = [GooglePlacesLoader.Result]()
-        sut.load { capturedResults.append($0) }
+    private func expect(_ sut: GooglePlacesLoader, toCompleteWith expectedResult: GooglePlacesLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Wait for load to completion")
+        sut.load { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case let (.success(receivedPlaces), .success(expectedPlaces)):
+                XCTAssertEqual(receivedPlaces, expectedPlaces, file: file, line: line)
+
+            case let (.failure(receivedError as GooglePlacesLoader.Error), .failure(expectedError as GooglePlacesLoader.Error)):
+                XCTAssertEqual(receivedError, expectedError, file: file, line: line)
+
+            default:
+                XCTFail("Expected Result \(expectedResult), but received Result \(receivedResult)")
+            }
+            
+            exp.fulfill()
+        }
         
         action()
-        
-        XCTAssertEqual(capturedResults, [result], file: file, line: line)
+            
+        wait(for: [exp], timeout: 1.0)
     }
     
     private class HTTPClientSpy: HTTPClient {

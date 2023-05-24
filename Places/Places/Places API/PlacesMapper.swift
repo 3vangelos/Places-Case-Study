@@ -5,7 +5,7 @@ internal class PlacesMapper {
     
     internal static func map(_ data: Data, _ response: HTTPURLResponse) -> GooglePlacesLoader.Result {
         guard response.statusCode == OK_200, let root = try? JSONDecoder().decode(Root.self, from: data) else {
-            return .failure(.invalidData)
+            return .failure(GooglePlacesLoader.Error.invalidData)
         }
 
         return .success(root.places)

@@ -1,6 +1,6 @@
 import Foundation
 
-public final class GooglePlacesLoader {
+public final class GooglePlacesLoader: PlacesLoader {
     private let url: URL
     private let client: HTTPClient
     
@@ -9,14 +9,14 @@ public final class GooglePlacesLoader {
         case invalidData
     }
     
-    public typealias Result = Swift.Result<[Place], Error>
+    public typealias Result = LoadPlacesResult
       
     public init(url: URL, client: HTTPClient) {
         self.client = client
         self.url = url
     }
     
-    public func load(completion: @escaping (Result) -> Void) {
+    public func load(completion: @escaping (LoadPlacesResult) -> Void) {
         client.get(from: url) { [weak self] result in
             guard self != nil else { return }
             
@@ -24,7 +24,7 @@ public final class GooglePlacesLoader {
             case let .success((data, response)):
                 completion(PlacesMapper.map(data, response))
             case .failure:
-                completion(.failure(.connectivity))
+                completion(.failure(GooglePlacesLoader.Error.connectivity))
             }
         }
     }

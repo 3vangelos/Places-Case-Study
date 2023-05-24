@@ -88,7 +88,7 @@
 		17C52C1D2A1D50560066BEDE /* PlacesTests */ = {
 			isa = PBXGroup;
 			children = (
-				17C52C1E2A1D50560066BEDE /* GooglePlacesLoaderTests.swift */,
+				17C52C392A1E4BC80066BEDE /* Places API */,
 			);
 			path = PlacesTests;
 			sourceTree = "<group>";
@@ -109,6 +109,14 @@
 				17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */,
 				17C52C352A1E28950066BEDE /* PlacesMapper.swift */,
 				17C52C372A1E42600066BEDE /* HTTPClient.swift */,
+			);
+			path = "Places API";
+			sourceTree = "<group>";
+		};
+		17C52C392A1E4BC80066BEDE /* Places API */ = {
+			isa = PBXGroup;
+			children = (
+				17C52C1E2A1D50560066BEDE /* GooglePlacesLoaderTests.swift */,
 			);
 			path = "Places API";
 			sourceTree = "<group>";
