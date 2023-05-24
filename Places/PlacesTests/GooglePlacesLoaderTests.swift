@@ -86,7 +86,17 @@ class GooglePlacesLoaderTests: XCTestCase {
     private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: GooglePlacesLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = GooglePlacesLoader(url: url, client: client)
+        
+        trackForMemoryLeaks(sut)
+        trackForMemoryLeaks(client)
+
         return (sut, client)
+    }
+    
+    private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Instance have been deallocated. Potential Memory Leak", file: file, line: line)
+        }
     }
     
     func makePlace(id: UUID, name: String, category: String? = nil, imageURL: URL? = nil, location: Location) -> (model: Place, json: [String: Any]) {
@@ -113,7 +123,6 @@ class GooglePlacesLoaderTests: XCTestCase {
     func makePlacesJSON(_ places: [[String: Any]]) -> Data {
         let json =  [ "results": places]
         return try! JSONSerialization.data(withJSONObject: json)
-
     }
     
     private func expect(_ sut: GooglePlacesLoader, toCompleteWith result: GooglePlacesLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
