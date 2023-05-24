@@ -1,11 +1,5 @@
 import Foundation
 
-public typealias HTTPClientResult = Result<(Data, HTTPURLResponse), Error>
-
-public protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)
-}
-
 public final class GooglePlacesLoader {
     private let url: URL
     private let client: HTTPClient
