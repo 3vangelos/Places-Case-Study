@@ -58,6 +58,18 @@ class GooglePlacesLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_deliversNoPlacesOn200HTTPResponseWithEmptyJSONList() {
+        let (sut, client) = makeSUT()
+
+        var capturedResults = [GooglePlacesLoader.Result]()
+        sut.load { capturedResults.append($0) }
+        
+        let emptyJSON = Data("{\"results\": []}".utf8)
+        client.complete(withStatusCode: 200, data: emptyJSON)
+        
+        XCTAssertEqual(capturedResults, [.success([])])
+    }
+    
     // MARK - Helpers
     
     private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: GooglePlacesLoader, client: HTTPClientSpy) {
@@ -68,7 +80,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     
     private func expect(_ sut: GooglePlacesLoader, toCompleteWithError error: GooglePlacesLoader.Error, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         var capturedError = [GooglePlacesLoader.Result]()
-        sut.load { capturedError.append(.failure($0)) }
+        sut.load { capturedError.append($0) }
         
         action()
         
