@@ -17,7 +17,9 @@ public final class GooglePlacesLoader {
     }
     
     public func load(completion: @escaping (Result) -> Void) {
-        client.get(from: url) { result in
+        client.get(from: url) { [weak self] result in
+            guard self != nil else { return }
+            
             switch result {
             case let .success((data, response)):
                 completion(PlacesMapper.map(data, response))
