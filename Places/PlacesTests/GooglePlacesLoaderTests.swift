@@ -67,12 +67,12 @@ class GooglePlacesLoaderTests: XCTestCase {
     }
     
     private func expect(_ sut: GooglePlacesLoader, toCompleteWithError error: GooglePlacesLoader.Error, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
-        var capturedError = [GooglePlacesLoader.Error]()
-        sut.load { capturedError.append($0) }
+        var capturedError = [GooglePlacesLoader.Result]()
+        sut.load { capturedError.append(.failure($0)) }
         
         action()
         
-        XCTAssertEqual(capturedError, [error], file: file, line: line)
+        XCTAssertEqual(capturedError, [.failure(error)], file: file, line: line)
     }
     
     private class HTTPClientSpy: HTTPClient {

@@ -15,6 +15,8 @@ public final class GooglePlacesLoader {
         case invalidData
     }
     
+    public typealias Result = Swift.Result<[Place], Error>
+    
     public init(url: URL, client: HTTPClient) {
         self.client = client
         self.url = url
