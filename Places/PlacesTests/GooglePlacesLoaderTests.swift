@@ -32,37 +32,30 @@ class GooglePlacesLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        var capturedError = [GooglePlacesLoader.Error]()
-        sut.load { capturedError.append($0) }
-    
-        let clientError = NSError(domain: "Test", code: 0)
-        client.complete(with: clientError)
-
-        XCTAssertEqual(capturedError, [.connectivity])
+        expect(sut, toCompleteWithError: .connectivity, when: {
+            let clientError = NSError(domain: "Test", code: 0)
+            client.complete(with: clientError)
+        })
     }
     
     func test_load_deliversErrorOnNon200HTTPResponse() {
         let (sut, client) = makeSUT()
-        
 
         let samples =  [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, code in
-            var capturedErrors = [GooglePlacesLoader.Error]()
-            sut.load { capturedErrors.append($0) }
-            
-            client.complete(withStatusCode: code, at: index)
-            XCTAssertEqual(capturedErrors, [.invalidData])
+            expect(sut, toCompleteWithError: .invalidData, when: {
+                client.complete(withStatusCode: code, at: index)
+            })
         }
     }
     
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
         
-        var capturedError = [GooglePlacesLoader.Error]()
-        sut.load { capturedError.append($0) }
-    
-        let invalidJSON = Data("INVALID JSON".utf8)
-        client.complete(withStatusCode: 200, data: invalidJSON)
+        expect(sut, toCompleteWithError: .invalidData, when: {
+            let invalidJSON = Data("INVALID JSON".utf8)
+            client.complete(withStatusCode: 200, data: invalidJSON)
+        })
     }
     
     // MARK - Helpers
@@ -98,5 +91,12 @@ class GooglePlacesLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-
+    private func expect(_ sut: GooglePlacesLoader, toCompleteWithError error: GooglePlacesLoader.Error, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        var capturedError = [GooglePlacesLoader.Error]()
+        sut.load { capturedError.append($0) }
+        
+        action()
+        
+        XCTAssertEqual(capturedError, [error], file: file, line: line)
+    }
 }
