@@ -143,3 +143,46 @@ Given the user doesn't have connectivity
 | `category`    | `String` (optional) |
 | `location`    | `Location`          |
 | `url`	        | `URL` (optional)    |
+
+
+
+### Google Places Payload Example
+
+```
+GET /textsearch
+
+200 RESPONSE
+
+{
+  "results":
+    [
+      {
+        "formatted_address": "Some Address",
+        "geometry":
+          {
+            "location": { "lat": -33.8592041, "lng": 151.2132635 },
+          },
+        "icon": "icon.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "restaurant_pinlet",
+        "name": "Restaurant Name",
+        "opening_hours": { "open_now": false },
+        "photos":
+          [
+            {
+              "height": 4032,
+              "html_attributions":
+              "photo_reference": "XXX",
+              "width": 3024,
+            },
+          ],
+        "place_id": "XXX-Not_a_UUID",
+        "price_level": 4,
+        "rating": 4.5,
+        "types": ["restaurant", "point_of_interest", "food", "establishment"],
+        "user_ratings_total": 1681,
+      },
+      ....
+    ]
+}
+```
