@@ -1,6 +1,6 @@
 import Foundation
 
-class PlacesMapper {
+internal class PlacesMapper {
     static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [Places.Place] {
         guard response.statusCode == 200 else {
             throw GooglePlacesLoader.Error.invalidData
@@ -14,7 +14,9 @@ private extension PlacesMapper {
     private struct Root: Decodable {
         let results: [Place]
     }
+}
 
+private extension PlacesMapper {
     struct Place: Decodable {
         private let id: String
         private let name: String
@@ -40,7 +42,7 @@ private extension PlacesMapper {
     }
 }
 
-extension PlacesMapper.Place {
+private extension PlacesMapper.Place {
     struct Geometry: Decodable {
         private let googleLocation: Location
 
