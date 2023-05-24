@@ -13,6 +13,7 @@
 		17C52C2C2A1D51740066BEDE /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2B2A1D51740066BEDE /* Location.swift */; };
 		17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */; };
 		17C52C342A1D63650066BEDE /* GooglePlacesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */; };
+		17C52C362A1E28950066BEDE /* PlacesMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C352A1E28950066BEDE /* PlacesMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,7 @@
 		17C52C2B2A1D51740066BEDE /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		17C52C2D2A1D52EB0066BEDE /* PlacesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesLoader.swift; sourceTree = "<group>"; };
 		17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesLoader.swift; sourceTree = "<group>"; };
+		17C52C352A1E28950066BEDE /* PlacesMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				17C52C332A1D63650066BEDE /* GooglePlacesLoader.swift */,
+				17C52C352A1E28950066BEDE /* PlacesMapper.swift */,
 			);
 			path = "Places API";
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17C52C362A1E28950066BEDE /* PlacesMapper.swift in Sources */,
 				17C52C2C2A1D51740066BEDE /* Location.swift in Sources */,
 				17C52C2A2A1D50800066BEDE /* Place.swift in Sources */,
 				17C52C2E2A1D52EB0066BEDE /* PlacesLoader.swift in Sources */,
