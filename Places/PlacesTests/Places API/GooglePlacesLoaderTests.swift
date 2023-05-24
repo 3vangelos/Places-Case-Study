@@ -32,7 +32,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.connectivity), when: {
+        expect(sut, toCompleteWith: failure(.connectivity), when: {
             let clientError = NSError(domain: "Test", code: 0)
             client.complete(with: clientError)
         })
@@ -43,7 +43,7 @@ class GooglePlacesLoaderTests: XCTestCase {
 
         let samples =  [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, code in
-            expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.invalidData), when: {
+            expect(sut, toCompleteWith: failure(.invalidData), when: {
                 let json = makePlacesJSON([])
                 client.complete(withStatusCode: code, data:json, at: index)
             })
@@ -53,7 +53,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     func test_load_deliversErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(GooglePlacesLoader.Error.invalidData), when: {
+        expect(sut, toCompleteWith: failure(.invalidData), when: {
             let invalidJSON = Data("INVALID JSON".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
         })
@@ -107,6 +107,10 @@ class GooglePlacesLoaderTests: XCTestCase {
         return (sut, client)
     }
     
+    private func failure(_ error: GooglePlacesLoader.Error) -> GooglePlacesLoader.Result {
+        .failure(error)
+    }
+ 
     private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
         addTeardownBlock { [weak instance] in
             XCTAssertNil(instance, "Instance have been deallocated. Potential Memory Leak", file: file, line: line)
