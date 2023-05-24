@@ -44,7 +44,8 @@ class GooglePlacesLoaderTests: XCTestCase {
         let samples =  [199, 201, 300, 400, 500]
         samples.enumerated().forEach { index, code in
             expect(sut, toCompleteWith: .failure(.invalidData), when: {
-                client.complete(withStatusCode: code, at: index)
+                let json = makePlacesJSON([])
+                client.complete(withStatusCode: code, data:json, at: index)
             })
         }
     }
@@ -67,12 +68,52 @@ class GooglePlacesLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_deliversNoPlacesOn200HTTPResponseWithJSONPlaces() {
+        let (sut, client) = makeSUT()
+
+        let place1Location = Location(latitude: 53.1, longitude: 13.3)
+        let place1 = makePlace(id: UUID(), name: "A Name", location: place1Location)
+
+        
+        expect(sut, toCompleteWith: .success([place1.model]), when: {
+            let json = makePlacesJSON([place1.json])
+            client.complete(withStatusCode: 200, data: json)
+        })
+    }
+    
     // MARK - Helpers
     
     private func makeSUT(url: URL = URL(string: "https://a-url.com")!) -> (sut: GooglePlacesLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = GooglePlacesLoader(url: url, client: client)
         return (sut, client)
+    }
+    
+    func makePlace(id: UUID, name: String, category: String? = nil, imageURL: URL? = nil, location: Location) -> (model: Place, json: [String: Any]) {
+        let place = Place(id: id.uuidString,
+                          name: name,
+                          category: category,
+                          imageUrl: imageURL,
+                          location: location)
+        let locationJSON = [
+            "lat": location.latitude,
+            "lng": location.longitude
+        ]
+        let json: [String: Any] = [
+            "geometry": [
+                "location": locationJSON
+            ],
+            "name": place.name,
+            "place_id": place.id,
+        ].compactMapValues { $0 }
+        
+        return (place, json)
+    }
+    
+    func makePlacesJSON(_ places: [[String: Any]]) -> Data {
+        let json =  [ "results": places]
+        return try! JSONSerialization.data(withJSONObject: json)
+
     }
     
     private func expect(_ sut: GooglePlacesLoader, toCompleteWith result: GooglePlacesLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
@@ -99,7 +140,7 @@ class GooglePlacesLoaderTests: XCTestCase {
             messages[index].completion(.failure(error))
         }
         
-        func complete(withStatusCode code: Int, data: Data = Data(), at index: Int = 0) {
+        func complete(withStatusCode code: Int, data: Data, at index: Int = 0) {
             let response = HTTPURLResponse(
                 url: requestedURLs[index],
                 statusCode: code,
