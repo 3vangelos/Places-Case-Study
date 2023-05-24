@@ -110,13 +110,7 @@ class GooglePlacesLoaderTests: XCTestCase {
     private func failure(_ error: GooglePlacesLoader.Error) -> GooglePlacesLoader.Result {
         .failure(error)
     }
- 
-    private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(instance, "Instance have been deallocated. Potential Memory Leak", file: file, line: line)
-        }
-    }
-    
+     
     func makePlace(id: UUID, name: String, category: String? = nil, imageURL: URL? = nil, location: Location) -> (model: Place, json: [String: Any]) {
         let place = Place(id: id.uuidString,
                           name: name,

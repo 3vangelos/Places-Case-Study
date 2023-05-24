@@ -16,6 +16,7 @@
 		17C52C362A1E28950066BEDE /* PlacesMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C352A1E28950066BEDE /* PlacesMapper.swift */; };
 		17C52C382A1E42600066BEDE /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C372A1E42600066BEDE /* HTTPClient.swift */; };
 		17C52C3B2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C3A2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift */; };
+		17F6F92D2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F6F92C2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +40,7 @@
 		17C52C352A1E28950066BEDE /* PlacesMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesMapper.swift; sourceTree = "<group>"; };
 		17C52C372A1E42600066BEDE /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		17C52C3A2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
+		17F6F92C2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,10 +120,19 @@
 		17C52C392A1E4BC80066BEDE /* Places API */ = {
 			isa = PBXGroup;
 			children = (
+				17F6F92B2A1E9BA20087401A /* Helpers */,
 				17C52C1E2A1D50560066BEDE /* GooglePlacesLoaderTests.swift */,
 				17C52C3A2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift */,
 			);
 			path = "Places API";
+			sourceTree = "<group>";
+		};
+		17F6F92B2A1E9BA20087401A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				17F6F92C2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,6 +259,7 @@
 			files = (
 				17C52C1F2A1D50560066BEDE /* GooglePlacesLoaderTests.swift in Sources */,
 				17C52C3B2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift in Sources */,
+				17F6F92D2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
