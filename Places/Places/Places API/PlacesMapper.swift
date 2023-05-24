@@ -1,18 +1,24 @@
 import Foundation
 
 internal class PlacesMapper {
-    static func map(_ data: Data, _ response: HTTPURLResponse) throws -> [Places.Place] {
-        guard response.statusCode == 200 else {
-            throw GooglePlacesLoader.Error.invalidData
+    private static var OK_200: Int { return 200 }
+    
+    internal static func map(_ data: Data, _ response: HTTPURLResponse) -> GooglePlacesLoader.Result {
+        guard response.statusCode == OK_200, let root = try? JSONDecoder().decode(Root.self, from: data) else {
+            return .failure(.invalidData)
         }
-        
-        return try JSONDecoder().decode(Root.self, from: data).results.map { $0.place }
+
+        return .success(root.places)
     }
 }
 
 private extension PlacesMapper {
     private struct Root: Decodable {
         let results: [Place]
+        
+        var places: [Places.Place] {
+            return results.map { $0.place }
+        }
     }
 }
 

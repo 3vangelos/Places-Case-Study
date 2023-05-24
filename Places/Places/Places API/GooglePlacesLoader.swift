@@ -20,11 +20,7 @@ public final class GooglePlacesLoader {
         client.get(from: url) { result in
             switch result {
             case let .success((data, response)):
-                if let places = try? PlacesMapper.map(data, response) {
-                    completion(.success(places))
-                } else {
-                    completion(.failure(.invalidData))
-                }
+                completion(PlacesMapper.map(data, response))
             case .failure:
                 completion(.failure(.connectivity))
             }
