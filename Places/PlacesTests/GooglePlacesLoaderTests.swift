@@ -63,7 +63,7 @@ class GooglePlacesLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
 
         expect(sut, toCompleteWith: .success([]), when: {
-            let emptyJSON = Data("{\"results\": []}".utf8)
+            let emptyJSON = makePlacesJSON([])
             client.complete(withStatusCode: 200, data: emptyJSON)
         })
     }
