@@ -31,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		178F5BC72A1F3413004516AF /* Places.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Places.xctestplan; sourceTree = "<group>"; };
 		17C52C112A1D50560066BEDE /* Places.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Places.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C52C192A1D50560066BEDE /* PlacesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C52C1E2A1D50560066BEDE /* GooglePlacesLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesLoaderTests.swift; sourceTree = "<group>"; };
@@ -67,6 +68,7 @@
 		17C52C072A1D50550066BEDE = {
 			isa = PBXGroup;
 			children = (
+				178F5BC72A1F3413004516AF /* Places.xctestplan */,
 				17C52C132A1D50560066BEDE /* Places */,
 				17C52C1D2A1D50560066BEDE /* PlacesTests */,
 				17C52C122A1D50560066BEDE /* Products */,
