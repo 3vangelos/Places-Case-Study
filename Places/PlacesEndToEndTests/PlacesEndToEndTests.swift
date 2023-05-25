@@ -2,9 +2,9 @@ import XCTest
 import Places
 
 final class PlacesEndToEndTests: XCTestCase {
-
+    
     func test_endToEndTestServerGetPlacesResult_matchesFixedTestAccountData() {
-switch getPlacesResult() {
+        switch getPlacesResult() {
         case let .success(places)?:
             XCTAssertEqual(places.count, 20)
             
@@ -34,8 +34,12 @@ switch getPlacesResult() {
             
             exp.fulfill()
         }
-
+        
         wait(for: [exp], timeout: 15.0)
         return receivedResult
     }
 }
+
+
+
+
