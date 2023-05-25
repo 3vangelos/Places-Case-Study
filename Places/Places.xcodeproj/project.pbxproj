@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		178F5BCF2A1F3553004516AF /* PlacesEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178F5BCE2A1F3553004516AF /* PlacesEndToEndTests.swift */; };
 		178F5BD02A1F3553004516AF /* Places.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C52C112A1D50560066BEDE /* Places.framework */; };
+		178F5BD62A1F47A7004516AF /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F6F92C2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift */; };
 		17C52C1A2A1D50560066BEDE /* Places.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C52C112A1D50560066BEDE /* Places.framework */; };
 		17C52C1F2A1D50560066BEDE /* GooglePlacesLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C1E2A1D50560066BEDE /* GooglePlacesLoaderTests.swift */; };
 		17C52C2A2A1D50800066BEDE /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C292A1D50800066BEDE /* Place.swift */; };
@@ -308,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				178F5BCF2A1F3553004516AF /* PlacesEndToEndTests.swift in Sources */,
+				178F5BD62A1F47A7004516AF /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
