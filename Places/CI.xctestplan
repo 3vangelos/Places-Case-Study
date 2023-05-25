@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "CB8EB5BF-3C4D-4038-8CC6-CEBE07577412",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:Places.xcodeproj",
+          "identifier" : "17C52C102A1D50560066BEDE",
+          "name" : "Places"
+        }
+      ]
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Places.xcodeproj",
+        "identifier" : "178F5BCB2A1F3553004516AF",
+        "name" : "PlacesEndToEndTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Places.xcodeproj",
+        "identifier" : "17C52C182A1D50560066BEDE",
+        "name" : "PlacesTests"
+      }
+    }
+  ],
+  "version" : 1
+}
