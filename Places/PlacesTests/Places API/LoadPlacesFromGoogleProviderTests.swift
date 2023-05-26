@@ -2,7 +2,7 @@ import XCTest
 import Places
 
 
-class GooglePlacesLoaderTests: XCTestCase {
+class LoadPlacesFromGoogleProviderTests: XCTestCase {
 
     func test_init_doesNotRequestDataFromURL() {
         let (_, client) = makeSUT()
