@@ -9,20 +9,35 @@ class LocalPlacesLoader {
     }
     
     func save(_ places: [Place]) {
-        store.deleteCachedPlaces()
+        store.deleteCachedPlaces { [unowned self] error in
+            if error == nil {
+                store.insertPlaces(places)
+            }
+        }
     }
 }
 
 class PlacesStore {
-    var deleteCachedPlacesCount = 0
-    var insertCallCountProperty = 0
+    typealias DeletionCompletion = (Error?) -> Void
+
+    var insertCallCount = 0
+    var deletionCompletions = [DeletionCompletion]()
     
-    func deleteCachedPlaces() {
-        deleteCachedPlacesCount += 1
+    
+    func insertPlaces(_ places: [Place]) {
+        insertCallCount += 1
     }
     
-    func completeDeletion(with error: Error, at index: Int = 0) {
-        
+    func deleteCachedPlaces(completion: @escaping DeletionCompletion ) {
+        deletionCompletions.append(completion)
+    }
+    
+    func completeDeletion(with error: Error?, at index: Int = 0) {
+        deletionCompletions[index](error)
+    }
+    
+    func completeDeletionSuccessfully(at index: Int = 0) {
+        deletionCompletions[index](nil)
     }
 }
 
@@ -31,7 +46,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
     func test_init_doesNotDeleteCacheUponCreation() {
         let (_, store) = makeSUT()
 
-        XCTAssertEqual(store.deleteCachedPlacesCount, 0)
+        XCTAssertEqual(store.deletionCompletions.count, 0)
     }
     
     func test_save_requestsCacheDeletion() {
@@ -40,7 +55,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         
         sut.save(places)
         
-        XCTAssertEqual(store.deleteCachedPlacesCount, 1)
+        XCTAssertEqual(store.deletionCompletions.count, 1)
     }
     
     func test_doesNotRequestCacheInsertionOnDeletionError() {
@@ -51,8 +66,19 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.save(places)
         store.completeDeletion(with: deletionError)
         
-        XCTAssertEqual(store.insertCallCountProperty, 0)
+        XCTAssertEqual(store.insertCallCount, 0)
     }
+    
+    func test_requestsCacheInsertionOnDeletionSuccess() {
+        let (sut, store) = makeSUT()
+        let places = [uniquePlace(), uniquePlace()]
+        
+        sut.save(places)
+        store.completeDeletionSuccessfully()
+        
+        XCTAssertEqual(store.deletionCompletions.count, 1)
+    }
+
     
     // MARK: - Helpers
     
