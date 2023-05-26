@@ -15,9 +15,14 @@ class LocalPlacesLoader {
 
 class PlacesStore {
     var deleteCachedPlacesCount = 0
+    var insertCallCountProperty = 0
     
     func deleteCachedPlaces() {
         deleteCachedPlacesCount += 1
+    }
+    
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        
     }
 }
 
@@ -38,11 +43,25 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(store.deleteCachedPlacesCount, 1)
     }
     
+    func test_doesNotRequestCacheInsertionOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let places = [uniquePlace(), uniquePlace()]
+        let deletionError = anyError
+        
+        sut.save(places)
+        store.completeDeletion(with: deletionError)
+        
+        XCTAssertEqual(store.insertCallCountProperty, 0)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT() -> (sut: LocalPlacesLoader, store: PlacesStore) {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStore) {
         let store = PlacesStore()
         let sut = LocalPlacesLoader(store: store)
+        
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
     }
     
@@ -53,5 +72,9 @@ class LoadPlacesFromCacheTests: XCTestCase {
               imageUrl: nil,
               location: Location(latitude: 1,
                                  longitude: 1))
+    }
+    
+    private var anyError: Error {
+        NSError(domain: "Any Error", code: 1)
     }
 }
