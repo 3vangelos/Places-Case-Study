@@ -103,55 +103,30 @@ class LoadPlacesFromCacheTests: XCTestCase {
 
     func test_save_failsOnDeletionError() {
         let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
-        let insertionError = anyError
-        var receivedError: Error?
+        let deletionError = anyError
         
-        let exp = expectation(description: "Waiting for Completion")
-        sut.save(places) { error in
-            receivedError = error
-            exp.fulfill()
+        expect(sut, toCompleteWith: deletionError) {
+            store.completeDeletion(with: deletionError)
         }
-        store.completeDeletionSuccessfully()
-        store.completeInsertion(with: insertionError)
-        wait(for: [exp], timeout: 1.0)
-        
-        XCTAssertEqual(receivedError as NSError?, insertionError)
     }
     
     func test_save_failsOnInsertionError() {
         let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
-        let deletionError = anyError
-        var receivedError: Error?
+        let insertionError = anyError
         
-        let exp = expectation(description: "Waiting for Completion")
-        sut.save(places) { error in
-            receivedError = error
-            exp.fulfill()
+        expect(sut, toCompleteWith: insertionError) {
+            store.completeDeletionSuccessfully()
+            store.completeInsertion(with: insertionError)
         }
-        store.completeDeletion(with: deletionError)
-        wait(for: [exp], timeout: 1.0)
-        
-        XCTAssertEqual(receivedError as NSError?, deletionError)
     }
     
     func test_save_SucceedsOnSuccessfulCacheInsertion() {
         let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
-        var receivedError: Error?
         
-        let exp = expectation(description: "Waiting for Completion")
-        sut.save(places) { error in
-            receivedError = error
-            exp.fulfill()
+        expect(sut, toCompleteWith: nil) {
+            store.completeDeletionSuccessfully()
+            store.completeInsertionSuccessfully()
         }
-        
-        store.completeDeletionSuccessfully()
-        store.completeInsertionSuccessfully()
-        wait(for: [exp], timeout: 1.0)
-        
-        XCTAssertNil(receivedError)
     }
     
     // MARK: - Helpers
@@ -163,6 +138,22 @@ class LoadPlacesFromCacheTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        let places = [uniquePlace(), uniquePlace()]
+        var receivedError: Error?
+
+        let exp = expectation(description: "Wait for load to completion")
+        sut.save(places) { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        
+        action()
+            
+        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(receivedError as NSError?, expectedError, file: file, line: line)
     }
     
     private func uniquePlace() -> Place {
