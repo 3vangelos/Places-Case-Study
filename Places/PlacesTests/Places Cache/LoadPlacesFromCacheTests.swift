@@ -11,7 +11,9 @@ class LocalPlacesLoader {
     }
     
     func save(_ places: [Place], completion: @escaping (Error?) -> Void) {
-        store.deleteCachedPlaces { [unowned self] error in
+        store.deleteCachedPlaces { [weak self] error in
+            guard let self else { return }
+            
             if let error {
                 completion(error)
             } else {
@@ -94,6 +96,21 @@ class LoadPlacesFromCacheTests: XCTestCase {
             store.completeDeletionSuccessfully()
             store.completeInsertionSuccessfully()
         }
+    }
+    
+    func test_save_doesNotDeliverDeletionErrorAfterSUTInstanceHasBeenDealocated() {
+        let store = PlacesStoreSpy()
+        var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
+        var receivedErrors = [Error?]()
+        
+        
+        sut?.save([uniquePlace()]) { error in
+            receivedErrors.append(error)
+        }
+        sut = nil
+        store.completeDeletion(with: anyError)
+        
+        XCTAssertTrue(receivedErrors.isEmpty)
     }
     
     // MARK: - Helpers
