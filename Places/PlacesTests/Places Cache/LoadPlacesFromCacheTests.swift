@@ -1,44 +1,6 @@
 import XCTest
 import Places
 
-class LocalPlacesLoader {
-    private let store: PlacesStore
-    private let currentDate: () -> Date
-    
-    init(store: PlacesStore, currentDate: @escaping () -> Date) {
-        self.store = store
-        self.currentDate = currentDate
-    }
-    
-    func save(_ places: [Place], completion: @escaping (Error?) -> Void) {
-        store.deleteCachedPlaces { [weak self] error in
-            guard let self else { return }
-            
-            if let error {
-                completion(error)
-            } else {
-                self.cache(places, with: completion)
-            }
-        }
-    }
-    
-    func cache(_ places: [Place], with completion: @escaping (Error?) -> Void) {
-        store.insert(places, timestamp: currentDate()) { [weak self] error in
-            guard self != nil else { return }
-            
-            completion(error)
-        }
-    }
-}
-
-protocol PlacesStore {
-    typealias DeletionCompletion = (Error?) -> Void
-    typealias InsertionCompletion = (Error?) -> Void
-    
-    func deleteCachedPlaces(completion: @escaping DeletionCompletion)
-    func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion)
-}
-
 class LoadPlacesFromCacheTests: XCTestCase {
     
     func test_init_doesNotMessageStoreUponCreation() {
