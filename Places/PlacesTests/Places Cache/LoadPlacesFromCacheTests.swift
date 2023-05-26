@@ -10,11 +10,12 @@ class LocalPlacesLoader {
         self.currentDate = currentDate
     }
     
-    func save(_ places: [Place]) {
+    func save(_ places: [Place], completion: @escaping (Error?) -> Void) {
         store.deleteCachedPlaces { [unowned self] error in
-            if error == nil {
-                store.insert(places, timestamp: currentDate())
-            }
+            if let error {
+                completion(error)
+            } else {
+                store.insert(places, timestamp: currentDate())            }
         }
     }
 }
@@ -61,7 +62,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         let (sut, store) = makeSUT()
         let places = [uniquePlace(), uniquePlace()]
         
-        sut.save(places)
+        sut.save(places) { _ in }
         
         XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
     }
@@ -71,7 +72,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         let places = [uniquePlace(), uniquePlace()]
         let deletionError = anyError
         
-        sut.save(places)
+        sut.save(places) { _ in }
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
@@ -82,12 +83,28 @@ class LoadPlacesFromCacheTests: XCTestCase {
         let places = [uniquePlace(), uniquePlace()]
         let (sut, store) = makeSUT { timestamp }
         
-        sut.save(places)
+        sut.save(places) { _ in }
         store.completeDeletionSuccessfully()
         
         XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places, timestamp)])
     }
 
+    func test_save_failsOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let places = [uniquePlace(), uniquePlace()]
+        let deletionError = anyError
+        var receivedError: Error?
+        
+        let exp = expectation(description: "Waiting for Completion")
+        sut.save(places) { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        store.completeDeletion(with: deletionError)
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertEqual(receivedError as NSError?, deletionError)
+    }
     
     // MARK: - Helpers
     
@@ -109,7 +126,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
                                  longitude: 1))
     }
     
-    private var anyError: Error {
+    private var anyError: NSError {
         NSError(domain: "Any Error", code: 1)
     }
 }
