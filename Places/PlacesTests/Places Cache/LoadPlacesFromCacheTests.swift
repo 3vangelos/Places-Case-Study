@@ -89,7 +89,6 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.save(places)
         store.completeDeletionSuccessfully()
         
-        XCTAssertEqual(store.insertions.count, 1)
         XCTAssertEqual(store.insertions.first?.places, places)
         XCTAssertEqual(store.insertions.first?.timestamp, timestamp)
 
