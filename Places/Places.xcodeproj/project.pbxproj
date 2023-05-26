@@ -99,8 +99,7 @@
 		17C52C072A1D50550066BEDE = {
 			isa = PBXGroup;
 			children = (
-				17EFCA2B2A1F4C7100C8A210 /* CI.xctestplan */,
-				178F5BC72A1F3413004516AF /* Places.xctestplan */,
+				17F331622A20D69100ADFB07 /* Test Plans */,
 				17C52C132A1D50560066BEDE /* Places */,
 				17C52C1D2A1D50560066BEDE /* PlacesTests */,
 				178F5BCD2A1F3553004516AF /* PlacesEndToEndTests */,
@@ -181,6 +180,15 @@
 				17F331602A20AA6800ADFB07 /* LoadPlacesFromCacheTests.swift */,
 			);
 			path = "Places Cache";
+			sourceTree = "<group>";
+		};
+		17F331622A20D69100ADFB07 /* Test Plans */ = {
+			isa = PBXGroup;
+			children = (
+				17EFCA2B2A1F4C7100C8A210 /* CI.xctestplan */,
+				178F5BC72A1F3413004516AF /* Places.xctestplan */,
+			);
+			path = "Test Plans";
 			sourceTree = "<group>";
 		};
 		17F6F92B2A1E9BA20087401A /* Helpers */ = {
