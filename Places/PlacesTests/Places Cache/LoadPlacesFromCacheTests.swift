@@ -21,16 +21,23 @@ class LocalPlacesLoader {
 
 class PlacesStore {
     typealias DeletionCompletion = (Error?) -> Void
-    var deletionCompletions = [DeletionCompletion]()
-    var insertions = [(places: [Place], timestamp: Date)]()
+    
+    enum ReceivedMessage: Equatable {
+        case deleteCachedPlaces
+        case insert([Place], Date)
+    }
+    
+    private var deletionCompletions = [DeletionCompletion]()
+    private(set) var receivedMessages = [ReceivedMessage]()
     
     
     func insert(_ places: [Place], timestamp: Date) {
-        insertions.append((places, timestamp))
+        receivedMessages.append(.insert(places, timestamp))
     }
     
     func deleteCachedPlaces(completion: @escaping DeletionCompletion ) {
         deletionCompletions.append(completion)
+        receivedMessages.append(.deleteCachedPlaces)
     }
     
     func completeDeletion(with error: Error?, at index: Int = 0) {
@@ -44,10 +51,10 @@ class PlacesStore {
 
 class LoadPlacesFromCacheTests: XCTestCase {
     
-    func test_init_doesNotDeleteCacheUponCreation() {
+    func test_init_doesNotMessageStoreUponCreation() {
         let (_, store) = makeSUT()
 
-        XCTAssertEqual(store.deletionCompletions.count, 0)
+        XCTAssertEqual(store.receivedMessages, [])
     }
     
     func test_save_requestsCacheDeletion() {
@@ -56,7 +63,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         
         sut.save(places)
         
-        XCTAssertEqual(store.deletionCompletions.count, 1)
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
     }
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() {
@@ -67,18 +74,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.save(places)
         store.completeDeletion(with: deletionError)
         
-        XCTAssertEqual(store.insertions.count, 0)
-    }
-    
-    func test_save_requestsCacheInsertionOnDeletionSuccess() {
-        let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
-        
-        sut.save(places)
-        store.completeDeletionSuccessfully()
-        
-        XCTAssertEqual(store.deletionCompletions.count, 1)
-        XCTAssertEqual(store.insertions.count, 1)
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
     }
     
     func test_save_requestsCacheInsertionWithTimestmpOnDeletionSuccess() {
@@ -89,10 +85,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.save(places)
         store.completeDeletionSuccessfully()
         
-        XCTAssertEqual(store.insertions.first?.places, places)
-        XCTAssertEqual(store.insertions.first?.timestamp, timestamp)
-
-        XCTAssertEqual(store.deletionCompletions.count, 1)
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places, timestamp)])
     }
 
     
