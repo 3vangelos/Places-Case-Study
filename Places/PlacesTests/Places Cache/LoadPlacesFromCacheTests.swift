@@ -17,12 +17,16 @@ class LocalPlacesLoader {
             if let error {
                 completion(error)
             } else {
-                store.insert(places, timestamp: currentDate()) { [weak self] error in
-                    guard self != nil else { return }
-                    
-                    completion(error)
-                }
+                self.cache(places, with: completion)
             }
+        }
+    }
+    
+    func cache(_ places: [Place], with completion: @escaping (Error?) -> Void) {
+        store.insert(places, timestamp: currentDate()) { [weak self] error in
+            guard self != nil else { return }
+            
+            completion(error)
         }
     }
 }
