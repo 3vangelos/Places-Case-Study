@@ -21,45 +21,12 @@ class LocalPlacesLoader {
     }
 }
 
-class PlacesStore {
+protocol PlacesStore {
     typealias DeletionCompletion = (Error?) -> Void
     typealias InsertionCompletion = (Error?) -> Void
     
-    enum ReceivedMessage: Equatable {
-        case deleteCachedPlaces
-        case insert([Place], Date)
-    }
-    
-    private var insertionCompletions = [DeletionCompletion]()
-    private var deletionCompletions = [InsertionCompletion]()
-    private(set) var receivedMessages = [ReceivedMessage]()
-    
-    
-    func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion) {
-        insertionCompletions.append(completion)
-        receivedMessages.append(.insert(places, timestamp))
-    }
-    
-    func deleteCachedPlaces(completion: @escaping DeletionCompletion) {
-        deletionCompletions.append(completion)
-        receivedMessages.append(.deleteCachedPlaces)
-    }
-    
-    func completeDeletion(with error: Error?, at index: Int = 0) {
-        deletionCompletions[index](error)
-    }
-    
-    func completeDeletionSuccessfully(at index: Int = 0) {
-        deletionCompletions[index](nil)
-    }
-    
-    func completeInsertion(with error: Error?, at index: Int = 0) {
-        insertionCompletions[index](error)
-    }
-    
-    func completeInsertionSuccessfully(at index: Int = 0) {
-        insertionCompletions[index](nil)
-    }
+    func deleteCachedPlaces(completion: @escaping DeletionCompletion)
+    func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion)
 }
 
 class LoadPlacesFromCacheTests: XCTestCase {
@@ -131,8 +98,8 @@ class LoadPlacesFromCacheTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStore) {
-        let store = PlacesStore()
+    private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {
+        let store = PlacesStoreSpy()
         let sut = LocalPlacesLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)
@@ -154,6 +121,47 @@ class LoadPlacesFromCacheTests: XCTestCase {
             
         wait(for: [exp], timeout: 1.0)
         XCTAssertEqual(receivedError as NSError?, expectedError, file: file, line: line)
+    }
+    
+    private class PlacesStoreSpy: PlacesStore {
+        typealias DeletionCompletion = (Error?) -> Void
+        typealias InsertionCompletion = (Error?) -> Void
+        
+        enum ReceivedMessage: Equatable {
+            case deleteCachedPlaces
+            case insert([Place], Date)
+        }
+        
+        private var insertionCompletions = [DeletionCompletion]()
+        private var deletionCompletions = [InsertionCompletion]()
+        private(set) var receivedMessages = [ReceivedMessage]()
+        
+        
+        func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion) {
+            insertionCompletions.append(completion)
+            receivedMessages.append(.insert(places, timestamp))
+        }
+        
+        func deleteCachedPlaces(completion: @escaping DeletionCompletion) {
+            deletionCompletions.append(completion)
+            receivedMessages.append(.deleteCachedPlaces)
+        }
+        
+        func completeDeletion(with error: Error?, at index: Int = 0) {
+            deletionCompletions[index](error)
+        }
+        
+        func completeDeletionSuccessfully(at index: Int = 0) {
+            deletionCompletions[index](nil)
+        }
+        
+        func completeInsertion(with error: Error?, at index: Int = 0) {
+            insertionCompletions[index](error)
+        }
+        
+        func completeInsertionSuccessfully(at index: Int = 0) {
+            insertionCompletions[index](nil)
+        }
     }
     
     private func uniquePlace() -> Place {
