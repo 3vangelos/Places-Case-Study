@@ -131,6 +131,7 @@
 		17C52C1D2A1D50560066BEDE /* PlacesTests */ = {
 			isa = PBXGroup;
 			children = (
+				17F6F92B2A1E9BA20087401A /* Helpers */,
 				17F3315F2A20AA5100ADFB07 /* Places Cache */,
 				17C52C392A1E4BC80066BEDE /* Places API */,
 			);
@@ -161,7 +162,6 @@
 		17C52C392A1E4BC80066BEDE /* Places API */ = {
 			isa = PBXGroup;
 			children = (
-				17F6F92B2A1E9BA20087401A /* Helpers */,
 				17C52C1E2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift */,
 				17C52C3A2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift */,
 			);
