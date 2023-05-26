@@ -17,7 +17,11 @@ class LocalPlacesLoader {
             if let error {
                 completion(error)
             } else {
-                store.insert(places, timestamp: currentDate(), completion: completion)
+                store.insert(places, timestamp: currentDate()) { [weak self] error in
+                    guard self != nil else { return }
+                    
+                    completion(error)
+                }
             }
         }
     }
@@ -103,12 +107,27 @@ class LoadPlacesFromCacheTests: XCTestCase {
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
         var receivedErrors = [Error?]()
         
-        
         sut?.save([uniquePlace()]) { error in
             receivedErrors.append(error)
         }
         sut = nil
         store.completeDeletion(with: anyError)
+        
+        XCTAssertTrue(receivedErrors.isEmpty)
+    }
+    
+    func test_save_doesNotDeliverInsertaionErrorAfterSUTInstanceHasBeenDealocated() {
+        let store = PlacesStoreSpy()
+        var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
+        var receivedErrors = [Error?]()
+        
+        sut?.save([uniquePlace()]) { error in
+            receivedErrors.append(error)
+        }
+        
+        store.completeDeletionSuccessfully()
+        sut = nil
+        store.completeInsertion(with: anyError)
         
         XCTAssertTrue(receivedErrors.isEmpty)
     }
@@ -149,8 +168,8 @@ class LoadPlacesFromCacheTests: XCTestCase {
             case insert([Place], Date)
         }
         
-        private var insertionCompletions = [DeletionCompletion]()
-        private var deletionCompletions = [InsertionCompletion]()
+        private var insertionCompletions = [InsertionCompletion]()
+        private var deletionCompletions = [DeletionCompletion]()
         private(set) var receivedMessages = [ReceivedMessage]()
         
         
