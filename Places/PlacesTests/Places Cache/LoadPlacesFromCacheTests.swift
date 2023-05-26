@@ -71,7 +71,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
     func test_save_doesNotDeliverDeletionErrorAfterSUTInstanceHasBeenDealocated() {
         let store = PlacesStoreSpy()
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
-        var receivedErrors = [Error?]()
+        var receivedErrors = [LocalPlacesLoader.SaveResult?]()
         
         sut?.save([uniquePlace()]) { error in
             receivedErrors.append(error)
@@ -85,7 +85,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
     func test_save_doesNotDeliverInsertaionErrorAfterSUTInstanceHasBeenDealocated() {
         let store = PlacesStoreSpy()
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
-        var receivedErrors = [Error?]()
+        var receivedErrors = [LocalPlacesLoader.SaveResult?]()
         
         sut?.save([uniquePlace()]) { error in
             receivedErrors.append(error)
@@ -111,7 +111,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
     
     private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         let places = [uniquePlace(), uniquePlace()]
-        var receivedError: Error?
+        var receivedError: LocalPlacesLoader.SaveResult?
 
         let exp = expectation(description: "Wait for load to completion")
         sut.save(places) { error in

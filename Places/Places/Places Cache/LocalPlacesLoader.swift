@@ -1,6 +1,8 @@
 import Foundation
 
 public final class LocalPlacesLoader {
+    public typealias SaveResult = Error
+    
     private let store: PlacesStore
     private let currentDate: () -> Date
     
@@ -9,7 +11,7 @@ public final class LocalPlacesLoader {
         self.currentDate = currentDate
     }
     
-    public func save(_ places: [Place], completion: @escaping (Error?) -> Void) {
+    public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
         store.deleteCachedPlaces { [weak self] error in
             guard let self else { return }
             
@@ -21,7 +23,7 @@ public final class LocalPlacesLoader {
         }
     }
     
-    private func cache(_ places: [Place], with completion: @escaping (Error?) -> Void) {
+    private func cache(_ places: [Place], with completion: @escaping (SaveResult?) -> Void) {
         store.insert(places, timestamp: currentDate()) { [weak self] error in
             guard self != nil else { return }
             
