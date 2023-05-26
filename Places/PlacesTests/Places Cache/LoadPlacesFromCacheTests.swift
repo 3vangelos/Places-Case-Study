@@ -56,6 +56,10 @@ class PlacesStore {
     func completeInsertion(with error: Error?, at index: Int = 0) {
         insertionCompletions[index](error)
     }
+    
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](nil)
+    }
 }
 
 class LoadPlacesFromCacheTests: XCTestCase {
@@ -130,6 +134,24 @@ class LoadPlacesFromCacheTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
         
         XCTAssertEqual(receivedError as NSError?, deletionError)
+    }
+    
+    func test_save_SucceedsOnSuccessfulCacheInsertion() {
+        let (sut, store) = makeSUT()
+        let places = [uniquePlace(), uniquePlace()]
+        var receivedError: Error?
+        
+        let exp = expectation(description: "Waiting for Completion")
+        sut.save(places) { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        
+        store.completeDeletionSuccessfully()
+        store.completeInsertionSuccessfully()
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertNil(receivedError)
     }
     
     // MARK: - Helpers
