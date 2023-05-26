@@ -15,28 +15,32 @@ class LocalPlacesLoader {
             if let error {
                 completion(error)
             } else {
-                store.insert(places, timestamp: currentDate())            }
+                store.insert(places, timestamp: currentDate(), completion: completion)
+            }
         }
     }
 }
 
 class PlacesStore {
     typealias DeletionCompletion = (Error?) -> Void
+    typealias InsertionCompletion = (Error?) -> Void
     
     enum ReceivedMessage: Equatable {
         case deleteCachedPlaces
         case insert([Place], Date)
     }
     
-    private var deletionCompletions = [DeletionCompletion]()
+    private var insertionCompletions = [DeletionCompletion]()
+    private var deletionCompletions = [InsertionCompletion]()
     private(set) var receivedMessages = [ReceivedMessage]()
     
     
-    func insert(_ places: [Place], timestamp: Date) {
+    func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion) {
+        insertionCompletions.append(completion)
         receivedMessages.append(.insert(places, timestamp))
     }
     
-    func deleteCachedPlaces(completion: @escaping DeletionCompletion ) {
+    func deleteCachedPlaces(completion: @escaping DeletionCompletion) {
         deletionCompletions.append(completion)
         receivedMessages.append(.deleteCachedPlaces)
     }
@@ -47,6 +51,10 @@ class PlacesStore {
     
     func completeDeletionSuccessfully(at index: Int = 0) {
         deletionCompletions[index](nil)
+    }
+    
+    func completeInsertion(with error: Error?, at index: Int = 0) {
+        insertionCompletions[index](error)
     }
 }
 
@@ -90,6 +98,24 @@ class LoadPlacesFromCacheTests: XCTestCase {
     }
 
     func test_save_failsOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let places = [uniquePlace(), uniquePlace()]
+        let insertionError = anyError
+        var receivedError: Error?
+        
+        let exp = expectation(description: "Waiting for Completion")
+        sut.save(places) { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        store.completeDeletionSuccessfully()
+        store.completeInsertion(with: insertionError)
+        wait(for: [exp], timeout: 1.0)
+        
+        XCTAssertEqual(receivedError as NSError?, insertionError)
+    }
+    
+    func test_save_failsOnInsertionError() {
         let (sut, store) = makeSUT()
         let places = [uniquePlace(), uniquePlace()]
         let deletionError = anyError
