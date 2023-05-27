@@ -22,10 +22,33 @@ public final class GooglePlacesLoader: PlacesLoader {
             
             switch result {
             case let .success((data, response)):
-                completion(PlacesMapper.map(data, response))
+                do {
+                    let places = try PlacesMapper.map(data, response)
+                    completion(.success(places.toModels()))
+                } catch {
+                    completion(.failure(error))
+                }
             case .failure:
                 completion(.failure(GooglePlacesLoader.Error.connectivity))
             }
         }
+    }
+}
+
+
+private extension Array where Element == GooglePlace {
+    func toModels() -> [Place] {
+        self.map{ Places.Place(id: $0.id,
+                               name: $0.name,
+                               category: $0.category,
+                               imageUrl: $0.imageUrl,
+                               location: $0.geometry.location) }
+    }
+}
+
+private extension GooglePlace.Geometry {
+    var location: Places.Location {
+        Places.Location(latitude: googleLocation.lat,
+                        longitude: googleLocation.lng)
     }
 }
