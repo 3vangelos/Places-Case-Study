@@ -22,15 +22,19 @@ public final class GooglePlacesLoader: PlacesLoader {
             
             switch result {
             case let .success((data, response)):
-                do {
-                    let places = try PlacesMapper.map(data, response)
-                    completion(.success(places.toModels()))
-                } catch {
-                    completion(.failure(error))
-                }
+                completion(GooglePlacesLoader.map(data: data, response: response))
             case .failure:
                 completion(.failure(GooglePlacesLoader.Error.connectivity))
             }
+        }
+    }
+    
+    private static func map(data: Data, response: HTTPURLResponse) -> LoadPlacesResult {
+        do {
+            let places = try PlacesMapper.map(data, response)
+            return .success(places.toModels())
+        } catch {
+            return .failure(error)
         }
     }
 }
