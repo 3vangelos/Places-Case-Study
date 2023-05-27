@@ -11,19 +11,17 @@ class LoadPlacesFromCacheTests: XCTestCase {
     
     func test_save_requestsCacheDeletion() {
         let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
-        
-        sut.save(places) { _ in }
+
+        sut.save(uniquePlaces().models) { _ in }
         
         XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
     }
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() {
         let (sut, store) = makeSUT()
-        let places = [uniquePlace(), uniquePlace()]
         let deletionError = anyError
         
-        sut.save(places) { _ in }
+        sut.save(uniquePlaces().models) { _ in }
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces])
@@ -31,13 +29,13 @@ class LoadPlacesFromCacheTests: XCTestCase {
     
     func test_save_requestsCacheInsertionWithTimestmpOnDeletionSuccess() {
         let timestamp = Date()
-        let places = [uniquePlace(), uniquePlace()]
+        let places = uniquePlaces()
         let (sut, store) = makeSUT { timestamp }
         
-        sut.save(places) { _ in }
+        sut.save(places.models) { _ in }
         store.completeDeletionSuccessfully()
         
-        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places, timestamp)])
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places.localRepresentation, timestamp)])
     }
 
     func test_save_failsOnDeletionError() {
@@ -73,7 +71,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
         var receivedErrors = [LocalPlacesLoader.SaveResult?]()
         
-        sut?.save([uniquePlace()]) { error in
+        sut?.save(uniquePlaces().models) { error in
             receivedErrors.append(error)
         }
         sut = nil
@@ -87,7 +85,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
         var receivedErrors = [LocalPlacesLoader.SaveResult?]()
         
-        sut?.save([uniquePlace()]) { error in
+        sut?.save(uniquePlaces().models) { error in
             receivedErrors.append(error)
         }
         
@@ -110,11 +108,10 @@ class LoadPlacesFromCacheTests: XCTestCase {
     }
     
     private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
-        let places = [uniquePlace(), uniquePlace()]
         var receivedError: LocalPlacesLoader.SaveResult?
 
         let exp = expectation(description: "Wait for load to completion")
-        sut.save(places) { error in
+        sut.save(uniquePlaces().models) { error in
             receivedError = error
             exp.fulfill()
         }
@@ -126,12 +123,9 @@ class LoadPlacesFromCacheTests: XCTestCase {
     }
     
     private class PlacesStoreSpy: PlacesStore {
-        typealias DeletionCompletion = (Error?) -> Void
-        typealias InsertionCompletion = (Error?) -> Void
-        
         enum ReceivedMessage: Equatable {
             case deleteCachedPlaces
-            case insert([Place], Date)
+            case insert([LocalPlace], Date)
         }
         
         private var insertionCompletions = [InsertionCompletion]()
@@ -139,7 +133,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         private(set) var receivedMessages = [ReceivedMessage]()
         
         
-        func insert(_ places: [Place], timestamp: Date, completion: @escaping InsertionCompletion) {
+        func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping InsertionCompletion) {
             insertionCompletions.append(completion)
             receivedMessages.append(.insert(places, timestamp))
         }
@@ -174,6 +168,20 @@ class LoadPlacesFromCacheTests: XCTestCase {
               location: Location(latitude: 1,
                                  longitude: 1))
     }
+    
+    private func uniquePlaces() -> (models: [Place], localRepresentation: [LocalPlace]) {
+        let models = [uniquePlace(), uniquePlace()]
+        let localRepresentation = models.map { place in
+            LocalPlace(id: place.id,
+                       name: place.name,
+                       category: place.category,
+                       imageUrl: place.imageUrl,
+                       location: place.location)
+        }
+        
+        return (models, localRepresentation)
+    }
+    
     
     private var anyError: NSError {
         NSError(domain: "Any Error", code: 1)
