@@ -24,10 +24,20 @@ public final class LocalPlacesLoader {
     }
     
     private func cache(_ places: [Place], with completion: @escaping (SaveResult?) -> Void) {
-        store.insert(places, timestamp: currentDate()) { [weak self] error in
+        store.insert(places.toLocal(), timestamp: currentDate()) { [weak self] error in
             guard self != nil else { return }
             
             completion(error)
         }
+    }
+}
+
+private extension Array where Element == Place {
+    func toLocal() -> [LocalPlace] {
+        self.map{ LocalPlace(id: $0.id,
+                             name: $0.name,
+                             category: $0.category,
+                             imageUrl: $0.imageUrl,
+                             location: $0.location) }
     }
 }
