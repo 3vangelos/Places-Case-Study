@@ -1,23 +1,5 @@
 import Foundation
 
-private final class CachePlacesPolicy {
-    private init() {}
-    
-    private static let calendar = Calendar(identifier: .gregorian)
-    
-    private static var maxCacheAgeInDays: Int {
-        return 1
-    }
-    
-    static func validate(_ timestamp: Date, against date: Date) -> Bool {
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
-            return false
-        }
-        
-        return date < maxCacheAge
-    }
-}
-
 public final class LocalPlacesLoader: PlacesLoader {
     private let store: PlacesStore
     private let currentDate: () -> Date
@@ -39,7 +21,7 @@ extension LocalPlacesLoader {
             case let .failure(error):
                 completion(.failure(error))
                 
-            case let .found(places, timestamp) where CachePlacesPolicy.validate(timestamp, against: self.currentDate()):
+            case let .found(places, timestamp) where PlacesCachePolicy.validate(timestamp, against: self.currentDate()):
                 completion(.success(places.toModels()))
                 
             case .found, .empty:
@@ -58,7 +40,7 @@ extension LocalPlacesLoader {
             case .failure:
                 store.deleteCachedPlaces(completion: { _ in })
                 
-            case let .found(_, timestamp) where !CachePlacesPolicy.validate(timestamp, against: self.currentDate()):
+            case let .found(_, timestamp) where !PlacesCachePolicy.validate(timestamp, against: self.currentDate()):
                 store.deleteCachedPlaces(completion: { _ in })
                 
             case .empty, .found:

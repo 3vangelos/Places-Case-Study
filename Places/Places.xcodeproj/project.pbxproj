@@ -17,6 +17,7 @@
 		17BF46202A212437007B0BDB /* PlacesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BF461F2A212437007B0BDB /* PlacesStore.swift */; };
 		17BF46242A22ACF7007B0BDB /* LocalPlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BF46232A22ACF7007B0BDB /* LocalPlace.swift */; };
 		17C3862F2A264D830007DD1F /* ValidatePlacesCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C3862E2A264D830007DD1F /* ValidatePlacesCacheTests.swift */; };
+		17C386312A265FEF0007DD1F /* PlacesCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C386302A265FEF0007DD1F /* PlacesCachePolicy.swift */; };
 		17C52C1A2A1D50560066BEDE /* Places.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C52C112A1D50560066BEDE /* Places.framework */; };
 		17C52C1F2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C1E2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift */; };
 		17C52C2A2A1D50800066BEDE /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C52C292A1D50800066BEDE /* Place.swift */; };
@@ -59,6 +60,7 @@
 		17BF461F2A212437007B0BDB /* PlacesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesStore.swift; sourceTree = "<group>"; };
 		17BF46232A22ACF7007B0BDB /* LocalPlace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPlace.swift; sourceTree = "<group>"; };
 		17C3862E2A264D830007DD1F /* ValidatePlacesCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatePlacesCacheTests.swift; sourceTree = "<group>"; };
+		17C386302A265FEF0007DD1F /* PlacesCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesCachePolicy.swift; sourceTree = "<group>"; };
 		17C52C112A1D50560066BEDE /* Places.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Places.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C52C192A1D50560066BEDE /* PlacesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C52C1E2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadPlacesFromGoogleProviderTests.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				17BF461D2A21239F007B0BDB /* LocalPlacesLoader.swift */,
 				17BF461F2A212437007B0BDB /* PlacesStore.swift */,
 				17BF46232A22ACF7007B0BDB /* LocalPlace.swift */,
+				17C386302A265FEF0007DD1F /* PlacesCachePolicy.swift */,
 			);
 			path = "Places Cache";
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				17BF46202A212437007B0BDB /* PlacesStore.swift in Sources */,
 				17C52C2C2A1D51740066BEDE /* Location.swift in Sources */,
 				17C52C382A1E42600066BEDE /* HTTPClient.swift in Sources */,
+				17C386312A265FEF0007DD1F /* PlacesCachePolicy.swift in Sources */,
 				17BF461E2A21239F007B0BDB /* LocalPlacesLoader.swift in Sources */,
 				17BF46242A22ACF7007B0BDB /* LocalPlace.swift in Sources */,
 				17C52C2A2A1D50800066BEDE /* Place.swift in Sources */,
