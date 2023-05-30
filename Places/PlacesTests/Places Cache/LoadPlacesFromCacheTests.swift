@@ -40,6 +40,28 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(receivedError as NSError?, retrievalError as NSError)
     }
     
+    func test_load_deliversErrorOnEmptyCache() {
+        let (sut, store) = makeSUT()
+
+        let exp = expectation(description: "Wait for load completion")
+
+        var receivedPlaces: [Place]?
+        sut.load() { result in
+            switch result {
+            case let .success(places):
+                receivedPlaces = places
+            default:
+                XCTFail("Expected Places, but got \(result)")
+                
+            }
+            exp.fulfill()
+        }
+        
+        store.completeWithEmptyCache()
+        wait(for: [exp], timeout: 1.0)
+
+        XCTAssertEqual(receivedPlaces, [])
+    }
     
     // MARK: - Helpers
     

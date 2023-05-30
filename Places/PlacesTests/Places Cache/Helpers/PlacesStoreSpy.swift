@@ -48,4 +48,8 @@ class PlacesStoreSpy: PlacesStore {
     func completeRetrieval(with error: Error?, at index: Int = 0) {
         retrievalCompletions[index](error)
     }
+    
+    func completeWithEmptyCache(at index: Int = 0) {
+        retrievalCompletions[index](nil)
+    }
 }
