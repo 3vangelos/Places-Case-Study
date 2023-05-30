@@ -34,6 +34,17 @@ class LoadPlacesFromCacheTests: XCTestCase {
         }
     }
     
+    func test_load_deliversPlacesonLessThanOneDayCache() {
+        let expectedPlaces = uniquePlaces()
+        let fixedCurrentDate = Date()
+        let lessThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: 1)
+        let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
+
+        expect(sut, toCompleteWith: .success(expectedPlaces.models)) {
+            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: lessThanOneDayOldTimeStamp)
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {
@@ -47,6 +58,28 @@ class LoadPlacesFromCacheTests: XCTestCase {
     
     private var anyError: Error {
         NSError(domain: "Any Error", code: 1)
+    }
+    
+    private func uniquePlace() -> Place {
+        Place(id: UUID().uuidString,
+              name: "Any NAme",
+              category: nil,
+              imageUrl: nil,
+              location: Location(latitude: 1,
+                                 longitude: 1))
+    }
+    
+    private func uniquePlaces() -> (models: [Place], localRepresentation: [LocalPlace]) {
+        let models = [uniquePlace(), uniquePlace()]
+        let localRepresentation = models.map { place in
+            LocalPlace(id: place.id,
+                       name: place.name,
+                       category: place.category,
+                       imageUrl: place.imageUrl,
+                       location: place.location)
+        }
+        
+        return (models, localRepresentation)
     }
         
     private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedResult: LocalPlacesLoader.LoadResult, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
@@ -69,5 +102,15 @@ class LoadPlacesFromCacheTests: XCTestCase {
         action()
 
         wait(for: [exp], timeout: 1.0)
+    }
+}
+
+private extension Date {
+    func add(days: Int) -> Date {
+        return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func add(seconds: Int) -> Date {
+        return self.addingTimeInterval(1 )
     }
 }

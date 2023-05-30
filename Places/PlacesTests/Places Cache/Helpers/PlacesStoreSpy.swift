@@ -45,11 +45,15 @@ class PlacesStoreSpy: PlacesStore {
         insertionCompletions[index](nil)
     }
     
-    func completeRetrieval(with error: Error?, at index: Int = 0) {
-        retrievalCompletions[index](error)
+    func completeRetrieval(with error: Error, at index: Int = 0) {
+        retrievalCompletions[index](.failure(error))
     }
     
     func completeWithEmptyCache(at index: Int = 0) {
-        retrievalCompletions[index](nil)
+        retrievalCompletions[index](.empty)
+    }
+    
+    func completeRetrieval(with places: [LocalPlace], timestamp: Date, at index: Int = 0) {
+        retrievalCompletions[index](.found(places: places, timestamp: timestamp))
     }
 }
