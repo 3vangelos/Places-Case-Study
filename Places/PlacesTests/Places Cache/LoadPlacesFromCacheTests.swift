@@ -121,7 +121,7 @@ private extension Date {
         return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
     }
     
-    func add(seconds: Int) -> Date {
-        return self.addingTimeInterval(1)
+    func add(seconds: Double) -> Date {
+        return self.addingTimeInterval(seconds)
     }
 }
