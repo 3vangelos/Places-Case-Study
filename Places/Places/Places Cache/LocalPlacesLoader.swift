@@ -1,6 +1,6 @@
 import Foundation
 
-public final class LocalPlacesLoader {
+public final class LocalPlacesLoader: PlacesLoader {
     public typealias SaveResult = Error
     public typealias LoadResult = LoadPlacesResult
     
