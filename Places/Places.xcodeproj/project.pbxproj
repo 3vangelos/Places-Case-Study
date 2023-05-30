@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		175088B62A25CE5300362D5C /* LocalPlacesLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */; };
 		175088BA2A25CFFA00362D5C /* GooglePlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B92A25CFFA00362D5C /* GooglePlace.swift */; };
+		175088BE2A25D0EF00362D5C /* PlacesStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */; };
 		178F5BCF2A1F3553004516AF /* PlacesEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178F5BCE2A1F3553004516AF /* PlacesEndToEndTests.swift */; };
 		178F5BD02A1F3553004516AF /* Places.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C52C112A1D50560066BEDE /* Places.framework */; };
 		178F5BD62A1F47A7004516AF /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17F6F92C2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift */; };
@@ -49,6 +50,7 @@
 /* Begin PBXFileReference section */
 		175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPlacesLoaderTests.swift; sourceTree = "<group>"; };
 		175088B92A25CFFA00362D5C /* GooglePlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GooglePlace.swift; sourceTree = "<group>"; };
+		175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesStoreSpy.swift; sourceTree = "<group>"; };
 		178F5BC72A1F3413004516AF /* Places.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Places.xctestplan; sourceTree = "<group>"; };
 		178F5BCC2A1F3553004516AF /* PlacesEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		178F5BCE2A1F3553004516AF /* PlacesEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesEndToEndTests.swift; sourceTree = "<group>"; };
@@ -98,6 +100,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		175088BF2A25D1E900362D5C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		178F5BCD2A1F3553004516AF /* PlacesEndToEndTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,6 +201,7 @@
 		17F3315F2A20AA5100ADFB07 /* Places Cache */ = {
 			isa = PBXGroup;
 			children = (
+				175088BF2A25D1E900362D5C /* Helpers */,
 				175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */,
 				17F331602A20AA6800ADFB07 /* LoadPlacesFromCacheTests.swift */,
 			);
@@ -381,6 +392,7 @@
 			files = (
 				17F331612A20AA6800ADFB07 /* LoadPlacesFromCacheTests.swift in Sources */,
 				17C52C1F2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift in Sources */,
+				175088BE2A25D0EF00362D5C /* PlacesStoreSpy.swift in Sources */,
 				175088B62A25CE5300362D5C /* LocalPlacesLoaderTests.swift in Sources */,
 				17C52C3B2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift in Sources */,
 				17F6F92D2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift in Sources */,
