@@ -197,18 +197,20 @@ class LoadPlacesFromCacheTests: XCTestCase {
 }
 
 extension Date {
-    private var maxCacheAgeInDays : Int{
-        return 1
-    }
-    
     func minusPlacesCacheMaxAge() -> Date {
         add(days: -maxCacheAgeInDays)
     }
     
-    func add(days: Int) -> Date {
-        return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+    private var maxCacheAgeInDays : Int{
+        return 1
     }
     
+    private func add(days: Int) -> Date {
+        return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+    }
+}
+
+extension Date {
     func add(seconds: Double) -> Date {
         return self.addingTimeInterval(seconds)
     }
