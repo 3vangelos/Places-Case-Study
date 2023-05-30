@@ -1,12 +1,10 @@
 import Foundation
 
-public final class LocalPlacesLoader: PlacesLoader {
-    private let store: PlacesStore
+public final class CachePlacesPolicy {
     private let currentDate: () -> Date
     private lazy var calendar = Calendar(identifier: .gregorian)
     
-    public init(store: PlacesStore, currentDate: @escaping () -> Date) {
-        self.store = store
+    init(currentDate: @escaping () -> Date) {
         self.currentDate = currentDate
     }
     
@@ -14,12 +12,24 @@ public final class LocalPlacesLoader: PlacesLoader {
         return 1
     }
     
-    private func validate(_ timestamp: Date) -> Bool {
+    func validate(_ timestamp: Date) -> Bool {
         guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
             return false
         }
         
         return currentDate() < maxCacheAge
+    }
+}
+
+public final class LocalPlacesLoader: PlacesLoader {
+    private let store: PlacesStore
+    private let currentDate: () -> Date
+    private let cachePolicy: CachePlacesPolicy
+    
+    public init(store: PlacesStore, currentDate: @escaping () -> Date) {
+        self.store = store
+        self.currentDate = currentDate
+        self.cachePolicy = CachePlacesPolicy(currentDate: currentDate)
     }
 }
  
@@ -34,7 +44,7 @@ extension LocalPlacesLoader {
             case let .failure(error):
                 completion(.failure(error))
                 
-            case let .found(places, timestamp) where self.validate(timestamp):
+            case let .found(places, timestamp) where self.cachePolicy.validate(timestamp):
                 completion(.success(places.toModels()))
                 
             case .found, .empty:
@@ -53,7 +63,7 @@ extension LocalPlacesLoader {
             case .failure:
                 store.deleteCachedPlaces(completion: { _ in })
                 
-            case let .found(_, timestamp) where !self.validate(timestamp):
+            case let .found(_, timestamp) where !self.cachePolicy.validate(timestamp):
                 store.deleteCachedPlaces(completion: { _ in })
                 
             case .empty, .found:
