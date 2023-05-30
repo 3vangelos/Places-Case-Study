@@ -97,6 +97,18 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
+    func test_load_shouldDeleteExpiredCacheWhenCache() {
+        let expectedPlaces = uniquePlaces()
+        let fixedCurrentDate = Date()
+        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
+
+        sut.load { _ in }
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        
+        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {

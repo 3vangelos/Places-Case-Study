@@ -24,7 +24,11 @@ public final class LocalPlacesLoader {
             case let .found(places, timestamp) where self.validate(timestamp):
                 completion(.success(places.toModels()))
                 
-            case .found, .empty:
+            case .found:
+                self.store.deleteCachedPlaces(completion: { _ in })
+                completion(.success([]))
+
+            case .empty:
                 completion(.success([]))
             }
         }
