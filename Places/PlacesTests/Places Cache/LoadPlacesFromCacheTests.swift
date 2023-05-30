@@ -45,10 +45,21 @@ class LoadPlacesFromCacheTests: XCTestCase {
         }
     }
     
+    func test_load_deliversNoPlacesOnOneDayOldCache() {
+        let expectedPlaces = uniquePlaces()
+        let fixedCurrentDate = Date()
+        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
+
+        expect(sut, toCompleteWith: .success([])) {
+            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        }
+    }
+    
     func test_load_deliversNoPlacesOnMoreThanOneDayOldCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let moreThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let moreThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         expect(sut, toCompleteWith: .success([])) {

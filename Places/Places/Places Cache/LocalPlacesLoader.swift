@@ -6,6 +6,8 @@ public final class LocalPlacesLoader {
     
     private let store: PlacesStore
     private let currentDate: () -> Date
+    private lazy var calendar = Calendar(identifier: .gregorian)
+
     
     public init(store: PlacesStore, currentDate: @escaping () -> Date) {
         self.store = store
@@ -47,9 +49,12 @@ public final class LocalPlacesLoader {
         }
     }
     
+    private var maxCacheAgeInDays: Int {
+        return 1
+    }
+    
     private func validate(_ timestamp: Date) -> Bool {
-        let calendar = Calendar(identifier: .gregorian)
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: 1, to: timestamp) else {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
             return false
         }
         
