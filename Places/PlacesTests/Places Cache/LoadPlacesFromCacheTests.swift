@@ -197,8 +197,12 @@ class LoadPlacesFromCacheTests: XCTestCase {
 }
 
 extension Date {
+    private var maxCacheAgeInDays : Int{
+        return 1
+    }
+    
     func minusPlacesCacheMaxAge() -> Date {
-        add(days: -1)
+        add(days: -maxCacheAgeInDays)
     }
     
     func add(days: Int) -> Date {
