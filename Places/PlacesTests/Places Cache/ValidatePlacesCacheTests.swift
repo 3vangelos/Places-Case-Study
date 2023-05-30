@@ -8,6 +8,15 @@ class ValidatePlacesCacheTests: XCTestCase {
 
         XCTAssertEqual(store.receivedMessages, [])
     }
+        
+    func test_validateCache_deletesCacheOnRetrievalError() {
+        let (sut, store) = makeSUT()
+
+        sut.validateCache()
+        store.completeRetrieval(with: anyError)
+        
+        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+    }
     
     // MARK: - Helpers
     
@@ -20,4 +29,7 @@ class ValidatePlacesCacheTests: XCTestCase {
         return (sut, store)
     }
     
+    private var anyError: Error {
+        NSError(domain: "Any Error", code: 1)
+    }
 }

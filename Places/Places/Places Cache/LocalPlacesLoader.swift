@@ -20,7 +20,6 @@ public final class LocalPlacesLoader {
             
             switch result {
             case let .failure(error):
-                self.store.deleteCachedPlaces(completion: { _ in })
                 completion(.failure(error))
                 
             case let .found(places, timestamp) where self.validate(timestamp):
@@ -34,6 +33,11 @@ public final class LocalPlacesLoader {
                 completion(.success([]))
             }
         }
+    }
+    
+    public func validateCache() {
+        store.retrieve(completion: { _ in })
+        store.deleteCachedPlaces(completion: { _ in })
     }
 
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
