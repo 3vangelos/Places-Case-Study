@@ -20,47 +20,18 @@ class LoadPlacesFromCacheTests: XCTestCase {
     func test_load_failsOnRetrievalError() {
         let (sut, store) = makeSUT()
         let retrievalError = anyError
-        
-        let exp = expectation(description: "Wait for load completion")
-        
-        var receivedError: Error?
-        sut.load() { result in
-            switch result {
-            case let .failure(error):
-                receivedError = error
-            default:
-                XCTFail("Expected Error but got \(result)")
-            }
-            exp.fulfill()
+
+        expect(sut, toCompleteWith: .failure(retrievalError)) {
+            store.completeRetrieval(with: retrievalError)
         }
-        store.completeRetrieval(with: retrievalError)
-            
-        wait(for: [exp], timeout: 1.0)
-    
-        XCTAssertEqual(receivedError as NSError?, retrievalError as NSError)
     }
     
     func test_load_deliversErrorOnEmptyCache() {
         let (sut, store) = makeSUT()
 
-        let exp = expectation(description: "Wait for load completion")
-
-        var receivedPlaces: [Place]?
-        sut.load() { result in
-            switch result {
-            case let .success(places):
-                receivedPlaces = places
-            default:
-                XCTFail("Expected Places, but got \(result)")
-                
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .success([])) {
+            store.completeWithEmptyCache()
         }
-        
-        store.completeWithEmptyCache()
-        wait(for: [exp], timeout: 1.0)
-
-        XCTAssertEqual(receivedPlaces, [])
     }
     
     // MARK: - Helpers
@@ -77,21 +48,26 @@ class LoadPlacesFromCacheTests: XCTestCase {
     private var anyError: Error {
         NSError(domain: "Any Error", code: 1)
     }
-    
-    
-    private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        
+    private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedResult: LocalPlacesLoader.LoadResult, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
         let exp = expectation(description: "Wait for load completion")
-        var receivedError: Error?
 
-        sut.load() { error in
-            receivedError = error
+        sut.load() { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case let (.success(receivedPlaces), .success(expectedPlaces)):
+                XCTAssertEqual(receivedPlaces, expectedPlaces, file: file, line: line)
+                
+            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+                XCTAssertEqual(receivedError.code, expectedError.code, file: file, line: line)
+            default:
+                XCTFail("Expected \(expectedResult), but got \(receivedResult)")
+            }
+            
             exp.fulfill()
         }
-        
+
         action()
-            
+
         wait(for: [exp], timeout: 1.0)
-        XCTAssertEqual(receivedError as NSError?, expectedError, file: file, line: line)
-        
     }
 }
