@@ -42,6 +42,20 @@ class ValidatePlacesCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
     
+    func test_validateCache_doesNotDeliverResultAfterSUTHasBeenDeallocatde() {
+        let store = PlacesStoreSpy()
+        var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
+        var receivedResult = [LocalPlacesLoader.LoadResult]()
+        
+        sut?.validateCache()
+        
+        sut = nil
+        store.completeRetrieval(with: anyError)
+        
+        XCTAssertTrue(receivedResult.isEmpty)
+    }
+    
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {
