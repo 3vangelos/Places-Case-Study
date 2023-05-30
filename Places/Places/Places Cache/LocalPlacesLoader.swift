@@ -7,13 +7,27 @@ public final class LocalPlacesLoader {
     private let store: PlacesStore
     private let currentDate: () -> Date
     private lazy var calendar = Calendar(identifier: .gregorian)
-
+    
     
     public init(store: PlacesStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
     }
     
+    private var maxCacheAgeInDays: Int {
+        return 1
+    }
+    
+    private func validate(_ timestamp: Date) -> Bool {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
+            return false
+        }
+        
+        return currentDate() < maxCacheAge
+    }
+}
+ 
+extension LocalPlacesLoader {
     public func load(completion: @escaping (LoadPlacesResult) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
@@ -30,7 +44,9 @@ public final class LocalPlacesLoader {
             }
         }
     }
-    
+}
+
+extension LocalPlacesLoader {
     public func validateCache() {
         store.retrieve { [weak self] result in
             guard let self else { return }
@@ -47,7 +63,9 @@ public final class LocalPlacesLoader {
             }
         }
     }
+}
 
+extension LocalPlacesLoader {
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
         store.deleteCachedPlaces { [weak self] error in
             guard let self else { return }
@@ -66,18 +84,6 @@ public final class LocalPlacesLoader {
             
             completion(error)
         }
-    }
-    
-    private var maxCacheAgeInDays: Int {
-        return 1
-    }
-    
-    private func validate(_ timestamp: Date) -> Bool {
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
-            return false
-        }
-        
-        return currentDate() < maxCacheAge
     }
 }
 
