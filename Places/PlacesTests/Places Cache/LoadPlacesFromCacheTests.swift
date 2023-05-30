@@ -24,8 +24,13 @@ class LoadPlacesFromCacheTests: XCTestCase {
         let exp = expectation(description: "Wait for load completion")
         
         var receivedError: Error?
-        sut.load() { error in
-            receivedError = error
+        sut.load() { result in
+            switch result {
+            case let .failure(error):
+                receivedError = error
+            default:
+                XCTFail("Expected Error but got \(result)")
+            }
             exp.fulfill()
         }
         store.completeRetrieval(with: retrievalError)

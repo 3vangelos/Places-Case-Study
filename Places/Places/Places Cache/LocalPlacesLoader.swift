@@ -2,6 +2,7 @@ import Foundation
 
 public final class LocalPlacesLoader {
     public typealias SaveResult = Error
+    public typealias LoadResult = LoadPlacesResult
     
     private let store: PlacesStore
     private let currentDate: () -> Date
@@ -11,8 +12,12 @@ public final class LocalPlacesLoader {
         self.currentDate = currentDate
     }
     
-    public func load(completion: @escaping (Error?) -> Void) {
-        store.retrieve(completion: completion)
+    public func load(completion: @escaping (LoadPlacesResult) -> Void) {
+        store.retrieve { error in
+            if let error {
+                completion(.failure(error))
+            }
+        }
     }
     
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
