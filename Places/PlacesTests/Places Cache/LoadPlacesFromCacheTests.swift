@@ -12,9 +12,27 @@ class LoadPlacesFromCacheTests: XCTestCase {
     func test_load_requestCacheRetrieval() {
         let (sut, store) = makeSUT()
         
-        sut.load()
+        sut.load() { _ in }
 
         XCTAssertEqual(store.receivedMessages, [.retrieve])
+    }
+    
+    func test_load_failsOnRetrievalError() {
+        let (sut, store) = makeSUT()
+        let retrievalError = anyError
+        
+        let exp = expectation(description: "Wait for load completion")
+        
+        var receivedError: Error?
+        sut.load() { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        store.completeRetrieval(with: retrievalError)
+            
+        wait(for: [exp], timeout: 1.0)
+    
+        XCTAssertEqual(receivedError as NSError?, retrievalError as NSError)
     }
     
     
@@ -27,5 +45,26 @@ class LoadPlacesFromCacheTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private var anyError: Error {
+        NSError(domain: "Any Error", code: 1)
+    }
+    
+    
+    private func expect(_ sut: LocalPlacesLoader, toCompleteWith expectedError: NSError?, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Wait for load completion")
+        var receivedError: Error?
+
+        sut.load() { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        
+        action()
+            
+        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(receivedError as NSError?, expectedError, file: file, line: line)
+        
     }
 }

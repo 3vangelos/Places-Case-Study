@@ -10,12 +10,18 @@ class PlacesStoreSpy: PlacesStore {
     
     private var insertionCompletions = [InsertionCompletion]()
     private var deletionCompletions = [DeletionCompletion]()
+    private var retrievalCompletions = [RetrievalCompletion]()
     private(set) var receivedMessages = [ReceivedMessage]()
     
     
     func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping InsertionCompletion) {
         insertionCompletions.append(completion)
         receivedMessages.append(.insert(places, timestamp))
+    }
+    
+    func retrieve(completion: @escaping RetrievalCompletion) {
+        retrievalCompletions.append(completion)
+        receivedMessages.append(.retrieve)
     }
     
     func deleteCachedPlaces(completion: @escaping DeletionCompletion) {
@@ -39,7 +45,7 @@ class PlacesStoreSpy: PlacesStore {
         insertionCompletions[index](nil)
     }
     
-    func retrieve() {
-        receivedMessages.append(.retrieve)
+    func completeRetrieval(with error: Error?, at index: Int = 0) {
+        retrievalCompletions[index](error)
     }
 }
