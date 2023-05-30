@@ -18,6 +18,7 @@ public final class LocalPlacesLoader {
         store.retrieve { [unowned self] result in
             switch result {
             case let .failure(error):
+                self.store.deleteCachedPlaces(completion: { _ in })
                 completion(.failure(error))
                 
             case let .found(places, timestamp) where self.validate(timestamp):
