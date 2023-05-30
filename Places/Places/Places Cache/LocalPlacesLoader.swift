@@ -1,23 +1,18 @@
 import Foundation
 
 public final class CachePlacesPolicy {
-    private let currentDate: () -> Date
     private lazy var calendar = Calendar(identifier: .gregorian)
-    
-    init(currentDate: @escaping () -> Date) {
-        self.currentDate = currentDate
-    }
     
     private var maxCacheAgeInDays: Int {
         return 1
     }
     
-    func validate(_ timestamp: Date) -> Bool {
+    func validate(_ timestamp: Date, against date: Date) -> Bool {
         guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
             return false
         }
         
-        return currentDate() < maxCacheAge
+        return date < maxCacheAge
     }
 }
 
@@ -29,7 +24,7 @@ public final class LocalPlacesLoader: PlacesLoader {
     public init(store: PlacesStore, currentDate: @escaping () -> Date) {
         self.store = store
         self.currentDate = currentDate
-        self.cachePolicy = CachePlacesPolicy(currentDate: currentDate)
+        self.cachePolicy = CachePlacesPolicy()
     }
 }
  
@@ -44,7 +39,7 @@ extension LocalPlacesLoader {
             case let .failure(error):
                 completion(.failure(error))
                 
-            case let .found(places, timestamp) where self.cachePolicy.validate(timestamp):
+            case let .found(places, timestamp) where self.cachePolicy.validate(timestamp, against: self.currentDate()):
                 completion(.success(places.toModels()))
                 
             case .found, .empty:
@@ -63,7 +58,7 @@ extension LocalPlacesLoader {
             case .failure:
                 store.deleteCachedPlaces(completion: { _ in })
                 
-            case let .found(_, timestamp) where !self.cachePolicy.validate(timestamp):
+            case let .found(_, timestamp) where !self.cachePolicy.validate(timestamp, against: self.currentDate()):
                 store.deleteCachedPlaces(completion: { _ in })
                 
             case .empty, .found:

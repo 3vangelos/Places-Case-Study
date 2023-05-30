@@ -45,7 +45,7 @@ class ValidatePlacesCacheTests: XCTestCase {
     func test_validateCache_doesNotDeliverResultAfterSUTHasBeenDeallocatde() {
         let store = PlacesStoreSpy()
         var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
-        var receivedResult = [LocalPlacesLoader.LoadResult]()
+        let receivedResult = [LocalPlacesLoader.LoadResult]()
         
         sut?.validateCache()
         
