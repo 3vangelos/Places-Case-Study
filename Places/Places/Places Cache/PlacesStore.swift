@@ -6,4 +6,5 @@ public protocol PlacesStore {
     
     func deleteCachedPlaces(completion: @escaping DeletionCompletion)
     func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping InsertionCompletion)
+    func retrieve()
 }

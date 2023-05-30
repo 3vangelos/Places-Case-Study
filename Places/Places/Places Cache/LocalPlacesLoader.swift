@@ -11,6 +11,10 @@ public final class LocalPlacesLoader {
         self.currentDate = currentDate
     }
     
+    public func load() {
+        store.retrieve()
+    }
+    
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
         store.deleteCachedPlaces { [weak self] error in
             guard let self else { return }

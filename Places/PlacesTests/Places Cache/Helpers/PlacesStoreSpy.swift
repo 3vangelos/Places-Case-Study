@@ -5,6 +5,7 @@ class PlacesStoreSpy: PlacesStore {
     enum ReceivedMessage: Equatable {
         case deleteCachedPlaces
         case insert([LocalPlace], Date)
+        case retrieve
     }
     
     private var insertionCompletions = [InsertionCompletion]()
@@ -36,5 +37,9 @@ class PlacesStoreSpy: PlacesStore {
     
     func completeInsertionSuccessfully(at index: Int = 0) {
         insertionCompletions[index](nil)
+    }
+    
+    func retrieve() {
+        receivedMessages.append(.retrieve)
     }
 }
