@@ -121,6 +121,21 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
     
+    func test_load_doesNotDeliverResultAfterSUTHasBeenDeallocatde() {
+        let store = PlacesStoreSpy()
+        var sut: LocalPlacesLoader? = LocalPlacesLoader(store: store, currentDate: Date.init)
+        var receivedResult = [LocalPlacesLoader.LoadResult]()
+        
+        sut?.load(completion: {
+            receivedResult.append($0)
+        })
+        
+        sut = nil
+        store.completeWithEmptyCache()
+        
+        XCTAssertTrue(receivedResult.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {

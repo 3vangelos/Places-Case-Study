@@ -15,7 +15,9 @@ public final class LocalPlacesLoader {
     }
     
     public func load(completion: @escaping (LoadPlacesResult) -> Void) {
-        store.retrieve { [unowned self] result in
+        store.retrieve { [weak self] result in
+            guard let self else { return }
+            
             switch result {
             case let .failure(error):
                 self.store.deleteCachedPlaces(completion: { _ in })
