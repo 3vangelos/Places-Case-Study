@@ -1,6 +1,6 @@
 import Foundation
 
-private final class PlacesCachePolicy {
+final class PlacesCachePolicy {
     private init() {}
     
     private static let calendar = Calendar(identifier: .gregorian)

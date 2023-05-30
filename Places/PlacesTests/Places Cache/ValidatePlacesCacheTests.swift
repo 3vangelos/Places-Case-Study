@@ -18,26 +18,26 @@ class ValidatePlacesCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
     
-    func test_validateCache_DeletesOneDayOldCache() {
+    func test_validateCache_deletesCacheOnExactExpirationTimestampOfCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let expirationTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge()
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.validateCache()
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expirationTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
     
-    func test_validateCache_deletesMoreThanOneDayOldCache() {
+    func test_validateCache_deletesCacheOnExpiredCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let moreThanOneDayOldTimestamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
+        let expiredTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge().add(seconds: -1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.validateCache()
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: moreThanOneDayOldTimestamp)
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }

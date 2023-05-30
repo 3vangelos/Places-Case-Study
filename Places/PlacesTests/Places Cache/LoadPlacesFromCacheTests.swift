@@ -34,36 +34,36 @@ class LoadPlacesFromCacheTests: XCTestCase {
         }
     }
     
-    func test_load_deliversPlacesOnLessThanOneDayCache() {
+    func test_load_deliversPlacesOnNonCacheExpirationTimestamp() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let lessThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: 1)
+        let nonExpiredTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge().add(seconds: 1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         expect(sut, toCompleteWith: .success(expectedPlaces.models)) {
-            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: lessThanOneDayOldTimeStamp)
+            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: nonExpiredTimestamp)
         }
     }
     
-    func test_load_deliversNoPlacesOnOneDayOldCache() {
+    func test_load_deliversNoPlacesOnExactCacheExpiration() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let expirationTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge()
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expirationTimestamp)
         }
     }
     
-    func test_load_deliversNoPlacesOnMoreThanOneDayOldCache() {
+    func test_load_deliversNoPlacesOnExpiredCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let moreThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
+        let expiredTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge().add(seconds: -1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: moreThanOneDayOldTimeStamp)
+            store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expiredTimestamp)
         }
     }
     
@@ -85,38 +85,38 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
-    func test_load_doesNotDeleteValidCacheWhenCacheIsLessThanOneDayOld() {
+    func test_load_doesNotDeleteValidCacheWhenCacheIsValid() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let lessThanOneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: 1)
+        let nonExpiredTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge().add(seconds: 1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.load { _ in }
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: lessThanOneDayOldTimeStamp)
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: nonExpiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
-    func test_load_hasNoSideEffectsOnOneDayOldCache() {
+    func test_load_hasNoSideEffectsWhenCacheHasExactExpirationTimestamp() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let expirationTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge()
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.load { _ in }
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expirationTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
-    func test_load_hasNoSideEffectsOnMoreThanOneDayOldCache() {
+    func test_load_hasNoSideEffectsWhenCacheHasExpired() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
-        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
+        let expiredTimestamp = fixedCurrentDate.minusPlacesCacheMaxAge().add(seconds: -1)
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.load { _ in }
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
@@ -197,6 +197,10 @@ class LoadPlacesFromCacheTests: XCTestCase {
 }
 
 extension Date {
+    func minusPlacesCacheMaxAge() -> Date {
+        add(days: -1)
+    }
+    
     func add(days: Int) -> Date {
         return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
     }
