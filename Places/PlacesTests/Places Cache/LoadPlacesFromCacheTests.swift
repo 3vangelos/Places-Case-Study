@@ -97,7 +97,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
-    func test_load_shouldDeleteExpiredCacheWhenCacheOneDayOld() {
+    func test_load_hasNoSideEffectsOnOneDayOldCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
         let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
@@ -106,10 +106,10 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.load { _ in }
         store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
         
-        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+        XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
-    func test_load_shouldDeleteExpiredCacheWhenCacheMoreThanOneDayOld() {
+    func test_load_hasNoSideEffectsOnMoreThanOneDayOldCache() {
         let expectedPlaces = uniquePlaces()
         let fixedCurrentDate = Date()
         let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
@@ -118,7 +118,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
         sut.load { _ in }
         store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
         
-        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+        XCTAssertEqual(store.receivedMessages, [.retrieve])
     }
     
     func test_load_doesNotDeliverResultAfterSUTHasBeenDeallocatde() {
@@ -196,7 +196,7 @@ class LoadPlacesFromCacheTests: XCTestCase {
     }
 }
 
-private extension Date {
+extension Date {
     func add(days: Int) -> Date {
         return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
     }

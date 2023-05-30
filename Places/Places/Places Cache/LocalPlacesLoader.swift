@@ -26,7 +26,6 @@ public final class LocalPlacesLoader {
                 completion(.success(places.toModels()))
                 
             case .found:
-                self.store.deleteCachedPlaces(completion: { _ in })
                 completion(.success([]))
 
             case .empty:
@@ -36,8 +35,16 @@ public final class LocalPlacesLoader {
     }
     
     public func validateCache() {
-        store.retrieve(completion: { _ in })
-        store.deleteCachedPlaces(completion: { _ in })
+        store.retrieve { [unowned self] result in
+            switch result {
+            case .failure:
+                store.deleteCachedPlaces(completion: { _ in })
+            case let .found(_, timestamp) where !self.validate(timestamp):
+                store.deleteCachedPlaces(completion: { _ in })
+            case .empty, .found:
+                break
+            }
+        }
     }
 
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {

@@ -18,6 +18,30 @@ class ValidatePlacesCacheTests: XCTestCase {
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
     
+    func test_validateCache_DeletesOneDayOldCache() {
+        let expectedPlaces = uniquePlaces()
+        let fixedCurrentDate = Date()
+        let oneDayOldTimeStamp = fixedCurrentDate.add(days: -1)
+        let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
+
+        sut.validateCache()
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: oneDayOldTimeStamp)
+        
+        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+    }
+    
+    func test_validateCache_deletesMoreThanOneDayOldCache() {
+        let expectedPlaces = uniquePlaces()
+        let fixedCurrentDate = Date()
+        let moreThanOneDayOldTimestamp = fixedCurrentDate.add(days: -1).add(seconds: -1)
+        let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
+
+        sut.validateCache()
+        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: moreThanOneDayOldTimestamp)
+        
+        XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #filePath, line: UInt = #line) -> (sut: LocalPlacesLoader, store: PlacesStoreSpy) {
@@ -31,5 +55,27 @@ class ValidatePlacesCacheTests: XCTestCase {
     
     private var anyError: Error {
         NSError(domain: "Any Error", code: 1)
+    }
+    
+    private func uniquePlace() -> Place {
+        Place(id: UUID().uuidString,
+              name: "Any NAme",
+              category: nil,
+              imageUrl: nil,
+              location: Location(latitude: 1,
+                                 longitude: 1))
+    }
+    
+    private func uniquePlaces() -> (models: [Place], localRepresentation: [LocalPlace]) {
+        let models = [uniquePlace(), uniquePlace()]
+        let localRepresentation = models.map { place in
+            LocalPlace(id: place.id,
+                       name: place.name,
+                       category: place.category,
+                       imageUrl: place.imageUrl,
+                       location: place.location)
+        }
+        
+        return (models, localRepresentation)
     }
 }
