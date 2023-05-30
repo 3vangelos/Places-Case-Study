@@ -1,13 +1,9 @@
 import Foundation
 
 public final class LocalPlacesLoader: PlacesLoader {
-    public typealias SaveResult = Error
-    public typealias LoadResult = LoadPlacesResult
-    
     private let store: PlacesStore
     private let currentDate: () -> Date
     private lazy var calendar = Calendar(identifier: .gregorian)
-    
     
     public init(store: PlacesStore, currentDate: @escaping () -> Date) {
         self.store = store
@@ -28,6 +24,8 @@ public final class LocalPlacesLoader: PlacesLoader {
 }
  
 extension LocalPlacesLoader {
+    public typealias LoadResult = LoadPlacesResult
+    
     public func load(completion: @escaping (LoadPlacesResult) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
@@ -66,6 +64,8 @@ extension LocalPlacesLoader {
 }
 
 extension LocalPlacesLoader {
+    public typealias SaveResult = Error
+    
     public func save(_ places: [Place], completion: @escaping (SaveResult?) -> Void) {
         store.deleteCachedPlaces { [weak self] error in
             guard let self else { return }
