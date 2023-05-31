@@ -67,7 +67,7 @@ public class CodablePlacesStore: PlacesStore {
     
     public func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping InsertionCompletion) {
         let storeURL = self.storeURL
-        queue.async {
+        queue.async(flags: .barrier) {
             do {
                 let encoder = JSONEncoder()
                 let cache = Cache(places: places.map(CodableLocalPlace.init), timestamp: timestamp)
@@ -83,7 +83,7 @@ public class CodablePlacesStore: PlacesStore {
     public
     func deleteCachedPlaces(completion: @escaping DeletionCompletion) {
         let storeURL = self.storeURL
-        queue.async {
+        queue.async(flags: .barrier) {
             guard FileManager.default.fileExists(atPath: storeURL.path) else {
                 return completion(nil)
             }
