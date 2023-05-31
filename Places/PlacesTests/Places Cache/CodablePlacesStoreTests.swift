@@ -106,6 +106,15 @@ class CodablePlacesStoreTests: XCTestCase {
         expect(sut, toRetrieve: .failure(anyError))
     }
     
+    func test_retrieve_hasNoSideEffectsOnFailure() {
+        let storeURL = testSpecificStoreURL
+        let sut = makeSUT(storeURL: storeURL)
+        
+        try! "invalid Data".write(to: storeURL, atomically: false, encoding: .utf8)
+        
+        expect(sut, toRetrieveTwice: .failure(anyError))
+    }
+    
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
