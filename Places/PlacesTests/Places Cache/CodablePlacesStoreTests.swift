@@ -63,11 +63,15 @@ class CodablePlacesStore {
     }
     
     func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping PlacesStore.InsertionCompletion) {
-        let encoder = JSONEncoder()
-        let cache = Cache(places: places.map(CodableLocalPlace.init), timestamp: timestamp)
-        let encoded = try! encoder.encode(cache)
-        try! encoded.write(to: storeURL)
-        completion(nil)
+        do {
+            let encoder = JSONEncoder()
+            let cache = Cache(places: places.map(CodableLocalPlace.init), timestamp: timestamp)
+            let encoded = try encoder.encode(cache)
+            try encoded.write(to: storeURL)
+            completion(nil)
+        } catch {
+            completion(error)
+        }
     }
 }
 
@@ -130,6 +134,17 @@ class CodablePlacesStoreTests: XCTestCase {
         XCTAssertNil(secondInsertionError, "Did expect to override cache successfully")
 
         expect(sut, toRetrieve: .found(places: secondPlaces, timestamp: secondTimestamp))
+    }
+    
+    func test_insert_deliversErrorOnInsertionError() {
+        let invalidStoreURL = URL(string: "invalid://store-url")
+        let sut = makeSUT(storeURL: invalidStoreURL)
+        
+        let places = uniquePlaces().localRepresentation
+        let timestamp = Date()
+        
+        let insertionError = insert((places: places, timestamp: timestamp), to: sut)
+        XCTAssertNotNil(insertionError, "Did expect successful cache insertion")
     }
     
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
