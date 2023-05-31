@@ -93,7 +93,7 @@ class CodablePlacesStoreTests: XCTestCase {
         expect(sut, toRetrieveTwice: .empty)
     }
     
-    func test_retrieveAfterInsertingIntoEmptyCache_deliversEmptyValue() {
+    func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
         let timestamp = Date()
