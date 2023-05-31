@@ -98,13 +98,7 @@ class CodablePlacesStoreTests: XCTestCase {
         let places = uniquePlaces().localRepresentation
         let timestamp = Date()
         
-        let exp = expectation(description: "Wait for Cache Retrieval")
-        sut.insert(places, timestamp: timestamp) { error in
-            XCTAssertNil(error, "Expected Places to be inserted successfully")
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        insert((places: places, timestamp: timestamp), to: sut)
         
         expect(sut, toRetrieve: .found(places: places, timestamp: timestamp))
     }
@@ -113,15 +107,9 @@ class CodablePlacesStoreTests: XCTestCase {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
         let timestamp = Date()
-        
-        let exp = expectation(description: "Wait for Cache Insertion")
-        sut.insert(places, timestamp: timestamp) { error in
-            XCTAssertNil(error, "Expected Places to be inserted successfully")
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
 
+        insert((places: places, timestamp: timestamp), to: sut)
+        
         expect(sut, toRetrieveTwice: .found(places: places, timestamp: timestamp))
     }
     
@@ -139,6 +127,16 @@ class CodablePlacesStoreTests: XCTestCase {
         expect(sut, toRetrieve: expectedResult)
     }
 
+    func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: CodablePlacesStore, file: StaticString = #file, line: UInt = #line) {
+        let exp = expectation(description: "Wait for Cache Insertion")
+        
+        sut.insert(cache.places, timestamp: cache.timestamp) { insertionError in
+            XCTAssertNil(insertionError, "Expected to insert placessuccessfully", file: file, line: line)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
     
     func expect(_ sut: CodablePlacesStore, toRetrieve expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for Retrieval")
