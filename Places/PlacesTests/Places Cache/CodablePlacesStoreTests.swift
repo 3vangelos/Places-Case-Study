@@ -53,9 +53,13 @@ class CodablePlacesStore {
             return completion(.empty)
         }
         
-        let decoder = JSONDecoder()
-        let cache = try! decoder.decode(Cache.self, from: data)
-        completion(.found(places: cache.localPlaces, timestamp: cache.timestamp))
+        do {
+            let decoder = JSONDecoder()
+            let cache = try decoder.decode(Cache.self, from: data)
+            completion(.found(places: cache.localPlaces, timestamp: cache.timestamp))
+        } catch {
+            completion(.failure(error))
+        }
     }
     
     func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping PlacesStore.InsertionCompletion) {
@@ -91,6 +95,14 @@ class CodablePlacesStoreTests: XCTestCase {
         let sut = makeSUT()
         
         expect(sut, toRetrieveTwice: .empty)
+    }
+    
+    func test_retrieve_deliversfailureOnRetrievalError() {
+        let sut = makeSUT()
+        
+        try! "invalid Data".write(to: testSpecificStoreURL, atomically: false, encoding: .utf8)
+        
+        expect(sut, toRetrieve: .failure(anyError))
     }
     
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
@@ -138,7 +150,8 @@ class CodablePlacesStoreTests: XCTestCase {
         
         sut.retrieve { receivedResult in
             switch (expectedResult, receivedResult) {
-            case (.empty, .empty):
+            case (.empty, .empty),
+                 (.failure, .failure):
                 break
                 
             case let (.found(expectedPlaces, expectedTimestamp), .found(retrievedPlaces, retrievedTimestamp)):
