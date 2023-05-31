@@ -144,6 +144,37 @@ class CodablePlacesStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
+        let sut = makeSUT()
+        let places = uniquePlaces().localRepresentation
+        let timestamp = Date()
+        let exp = expectation(description: "Wait for Cache Retrieval")
+        
+        sut.insert(places, timestamp: timestamp) { error in
+            XCTAssertNil(error, "Expected Places to be inserted successfully")
+            
+            sut.retrieve { firstResult in
+                sut.retrieve { secondResult in
+                    switch (firstResult, secondResult) {
+                    case let (.found(firstPlaces, firstTimestamp), .found(places: secondPlaces, timestamp: secondTimestamp)):
+                        XCTAssertEqual(firstPlaces, places)
+                        XCTAssertEqual(firstTimestamp, timestamp)
+                        
+                        XCTAssertEqual(secondPlaces, places)
+                        XCTAssertEqual(secondTimestamp, timestamp)
+                        
+                    default:
+                        XCTFail("Expected retrieving twice from cache: \(places) & \(timestamp), but got \(firstResult) & \(secondResult) instead")
+                    }
+                    
+                    exp.fulfill()
+                }
+            }
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     
     // Mark: Helpers
     
