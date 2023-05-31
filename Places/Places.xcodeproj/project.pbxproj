@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		170AB3552A27930500B64B8B /* CodablePlacesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB3542A27930500B64B8B /* CodablePlacesStore.swift */; };
 		175088B62A25CE5300362D5C /* LocalPlacesLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */; };
 		175088BA2A25CFFA00362D5C /* GooglePlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B92A25CFFA00362D5C /* GooglePlace.swift */; };
 		175088BE2A25D0EF00362D5C /* PlacesStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		170AB3542A27930500B64B8B /* CodablePlacesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodablePlacesStore.swift; sourceTree = "<group>"; };
 		175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPlacesLoaderTests.swift; sourceTree = "<group>"; };
 		175088B92A25CFFA00362D5C /* GooglePlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GooglePlace.swift; sourceTree = "<group>"; };
 		175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesStoreSpy.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				17BF461F2A212437007B0BDB /* PlacesStore.swift */,
 				17BF46232A22ACF7007B0BDB /* LocalPlace.swift */,
 				17C386302A265FEF0007DD1F /* PlacesCachePolicy.swift */,
+				170AB3542A27930500B64B8B /* CodablePlacesStore.swift */,
 			);
 			path = "Places Cache";
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				175088BA2A25CFFA00362D5C /* GooglePlace.swift in Sources */,
 				17BF46202A212437007B0BDB /* PlacesStore.swift in Sources */,
 				17C52C2C2A1D51740066BEDE /* Location.swift in Sources */,
+				170AB3552A27930500B64B8B /* CodablePlacesStore.swift in Sources */,
 				17C52C382A1E42600066BEDE /* HTTPClient.swift in Sources */,
 				17C386312A265FEF0007DD1F /* PlacesCachePolicy.swift in Sources */,
 				17BF461E2A21239F007B0BDB /* LocalPlacesLoader.swift in Sources */,

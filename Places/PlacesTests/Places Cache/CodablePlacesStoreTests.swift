@@ -1,94 +1,6 @@
 import XCTest
 import Places
 
-class CodablePlacesStore {
-    private struct Cache: Codable {
-        let places: [CodableLocalPlace]
-        let timestamp: Date
-        
-        var localPlaces: [LocalPlace] {
-            self.places.map {
-                $0.local
-            }
-        }
-    }
-    
-    private struct CodableLocalPlace: Codable {
-        private let id: String
-        private let name: String
-        private let category: String?
-        private let imageUrl: URL?
-        private let location: CodableLocation
-        
-        var local: LocalPlace {
-            LocalPlace(id: id, name: name, category: category, imageUrl: imageUrl, location: location.local)
-        }
-        
-        init(_ localPlace: LocalPlace) {
-            id = localPlace.id
-            name = localPlace.name
-            category = localPlace.category
-            imageUrl = localPlace.imageUrl
-            location = CodableLocation(latitude: localPlace.location.latitude, longitude: localPlace.location.longitude)
-        }
-    }
-    
-    private struct CodableLocation: Codable {
-        let latitude: Double
-        let longitude: Double
-        
-        var local: Location {
-            Location(latitude: latitude, longitude: longitude)
-        }
-    }
-    
-    private let storeURL: URL
-    
-    init(storeURL: URL) {
-        self.storeURL = storeURL
-    }
-    
-    func retrieve(completion: @escaping PlacesStore.RetrievalCompletion) {
-        guard let data = try? Data(contentsOf: storeURL) else {
-            return completion(.empty)
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            let cache = try decoder.decode(Cache.self, from: data)
-            completion(.found(places: cache.localPlaces, timestamp: cache.timestamp))
-        } catch {
-            completion(.failure(error))
-        }
-    }
-    
-    func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping PlacesStore.InsertionCompletion) {
-        do {
-            let encoder = JSONEncoder()
-            let cache = Cache(places: places.map(CodableLocalPlace.init), timestamp: timestamp)
-            let encoded = try encoder.encode(cache)
-            try encoded.write(to: storeURL)
-            completion(nil)
-        } catch {
-            completion(error)
-        }
-    }
-    
-    func deleteCachedPlaces(completion: @escaping PlacesStore.DeletionCompletion) {
-        guard FileManager.default.fileExists(atPath: storeURL.path) else {
-            return completion(nil)
-        }
-        
-        do {
-            try FileManager.default.removeItem(at: storeURL)
-            completion(nil)
-        } catch {
-            completion(error)
-        }
-    }
-
-}
-
 class CodablePlacesStoreTests: XCTestCase {
     
     override func setUp() {
@@ -213,14 +125,14 @@ class CodablePlacesStoreTests: XCTestCase {
     
     // Mark: Helpers
     
-    func makeSUT(storeURL: URL? = nil, file: StaticString = #file, line: UInt = #line) -> CodablePlacesStore {
+    func makeSUT(storeURL: URL? = nil, file: StaticString = #file, line: UInt = #line) -> PlacesStore {
         let sut = CodablePlacesStore(storeURL: storeURL ?? testSpecificStoreURL)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 
     @discardableResult
-    func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: CodablePlacesStore, file: StaticString = #file, line: UInt = #line) -> Error? {
+    func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: PlacesStore, file: StaticString = #file, line: UInt = #line) -> Error? {
         var receivedError: Error?
         
         let exp = expectation(description: "Wait for Cache Insertion")
@@ -234,7 +146,7 @@ class CodablePlacesStoreTests: XCTestCase {
         return receivedError
     }
     
-    private func deleteCache(from sut: CodablePlacesStore) -> Error? {
+    private func deleteCache(from sut: PlacesStore) -> Error? {
         let exp = expectation(description: "Wait for cache deletion")
         var deletionError: Error?
         sut.deleteCachedPlaces { receivedDeletionError in
@@ -245,7 +157,7 @@ class CodablePlacesStoreTests: XCTestCase {
         return deletionError
     }
     
-    func expect(_ sut: CodablePlacesStore, toRetrieve expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
+    func expect(_ sut: PlacesStore, toRetrieve expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for Retrieval")
         
         sut.retrieve { receivedResult in
@@ -268,7 +180,7 @@ class CodablePlacesStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    func expect(_ sut: CodablePlacesStore, toRetrieveTwice expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
+    func expect(_ sut: PlacesStore, toRetrieveTwice expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
         expect(sut, toRetrieve: expectedResult)
         expect(sut, toRetrieve: expectedResult)
     }
