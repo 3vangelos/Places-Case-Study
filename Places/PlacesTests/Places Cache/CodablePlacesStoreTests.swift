@@ -42,7 +42,11 @@ class CodablePlacesStore {
         }
     }
     
-    private let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
+    private let storeURL: URL
+    
+    init(storeURL: URL) {
+        self.storeURL = storeURL
+    }
     
     func retrieve(completion: @escaping PlacesStore.RetrievalCompletion) {
         guard let data = try? Data(contentsOf: storeURL) else {
@@ -140,7 +144,8 @@ class CodablePlacesStoreTests: XCTestCase {
     // Mark: Helpers
     
     func makeSUT(file: StaticString = #file, line: UInt = #line) -> CodablePlacesStore {
-        let sut = CodablePlacesStore()
+        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
+        let sut = CodablePlacesStore(storeURL: storeURL)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
