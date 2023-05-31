@@ -121,11 +121,6 @@ class CodablePlacesStoreTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
-    
-    func expect(_ sut: CodablePlacesStore, toRetrieveTwice expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
-        expect(sut, toRetrieve: expectedResult)
-        expect(sut, toRetrieve: expectedResult)
-    }
 
     func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: CodablePlacesStore, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for Cache Insertion")
@@ -158,6 +153,15 @@ class CodablePlacesStoreTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    func expect(_ sut: CodablePlacesStore, toRetrieveTwice expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
+        expect(sut, toRetrieve: expectedResult)
+        expect(sut, toRetrieve: expectedResult)
+    }
+          
+    private var anyError: Error {
+        NSError(domain: "Any Error", code: 1)
     }
 
     private func uniquePlace() -> Place {
