@@ -126,7 +126,7 @@ class CodablePlacesStoreTests: XCTestCase {
                     XCTAssertEqual(retrievedPlaces, places)
                     XCTAssertEqual(retrievedTimestamp, timestamp)
                 default:
-                    XCTFail("Expected empty result, got \(error) and \(result) instead")
+                    XCTFail("Expected empty result with \(places) and \(timestamp), but got \(result) instead")
                 }
                 
                 exp.fulfill()
@@ -139,8 +139,10 @@ class CodablePlacesStoreTests: XCTestCase {
     
     // Mark: Helpers
     
-    func makeSUT() -> CodablePlacesStore {
-        return CodablePlacesStore()
+    func makeSUT(file: StaticString = #file, line: UInt = #line) -> CodablePlacesStore {
+        let sut = CodablePlacesStore()
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
     }
     
     private func uniquePlace() -> Place {
