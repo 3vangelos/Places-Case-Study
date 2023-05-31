@@ -115,6 +115,23 @@ class CodablePlacesStoreTests: XCTestCase {
         expect(sut, toRetrieveTwice: .failure(anyError))
     }
     
+    func test_insert_overridesPreviouslyInsertedCache() {
+        let storeURL = testSpecificStoreURL
+        let sut = makeSUT(storeURL: storeURL)
+        let firstPlaces = uniquePlaces().localRepresentation
+        let firstTimestamp = Date()
+        
+        let firstInsertionError = insert((places: firstPlaces, timestamp: firstTimestamp), to: sut)
+        XCTAssertNil(firstInsertionError, "Did expect successful cache insertion")
+        
+        let secondPlaces = uniquePlaces().localRepresentation
+        let secondTimestamp = Date()
+        let secondInsertionError = insert((places: secondPlaces, timestamp: secondTimestamp), to: sut)
+        XCTAssertNil(secondInsertionError, "Did expect to override cache successfully")
+
+        expect(sut, toRetrieve: .found(places: secondPlaces, timestamp: secondTimestamp))
+    }
+    
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
@@ -144,15 +161,19 @@ class CodablePlacesStoreTests: XCTestCase {
         return sut
     }
 
-    func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: CodablePlacesStore, file: StaticString = #file, line: UInt = #line) {
+    @discardableResult
+    func insert(_ cache: (places: [LocalPlace], timestamp: Date), to sut: CodablePlacesStore, file: StaticString = #file, line: UInt = #line) -> Error? {
+        var receivedError: Error?
+        
         let exp = expectation(description: "Wait for Cache Insertion")
         
         sut.insert(cache.places, timestamp: cache.timestamp) { insertionError in
-            XCTAssertNil(insertionError, "Expected to insert placessuccessfully", file: file, line: line)
+            receivedError = insertionError
             exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
+        return receivedError
     }
     
     func expect(_ sut: CodablePlacesStore, toRetrieve expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
