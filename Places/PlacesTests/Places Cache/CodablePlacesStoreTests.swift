@@ -3,8 +3,43 @@ import Places
 
 class CodablePlacesStore {
     private struct Cache: Codable {
-        let places: [LocalPlace]
+        let places: [CodableLocalPlace]
         let timestamp: Date
+        
+        var localPlaces: [LocalPlace] {
+            self.places.map {
+                $0.local
+            }
+        }
+    }
+    
+    private struct CodableLocalPlace: Codable {
+        private let id: String
+        private let name: String
+        private let category: String?
+        private let imageUrl: URL?
+        private let location: CodableLocation
+        
+        var local: LocalPlace {
+            LocalPlace(id: id, name: name, category: category, imageUrl: imageUrl, location: location.local)
+        }
+        
+        init(_ localPlace: LocalPlace) {
+            id = localPlace.id
+            name = localPlace.name
+            category = localPlace.category
+            imageUrl = localPlace.imageUrl
+            location = CodableLocation(latitude: localPlace.location.latitude, longitude: localPlace.location.longitude)
+        }
+    }
+    
+    private struct CodableLocation: Codable {
+        let latitude: Double
+        let longitude: Double
+        
+        var local: Location {
+            Location(latitude: latitude, longitude: longitude)
+        }
     }
     
     private let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
@@ -16,12 +51,12 @@ class CodablePlacesStore {
         
         let decoder = JSONDecoder()
         let cache = try! decoder.decode(Cache.self, from: data)
-        completion(.found(places: cache.places, timestamp: cache.timestamp))
+        completion(.found(places: cache.localPlaces, timestamp: cache.timestamp))
     }
     
     func insert(_ places: [LocalPlace], timestamp: Date, completion: @escaping PlacesStore.InsertionCompletion) {
         let encoder = JSONEncoder()
-        let cache = Cache(places: places, timestamp: timestamp)
+        let cache = Cache(places: places.map(CodableLocalPlace.init), timestamp: timestamp)
         let encoded = try! encoder.encode(cache)
         try! encoded.write(to: storeURL)
         completion(nil)
