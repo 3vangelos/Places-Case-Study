@@ -72,13 +72,13 @@ class CodablePlacesStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        try? FileManager.default.removeItem(at: testSpecificStoreURL)
+        setupEmptyStoreState()
     }
     
     override func tearDown() {
         super.tearDown()
         
-        try? FileManager.default.removeItem(at: testSpecificStoreURL)
+        setupEmptyStoreState()
     }
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
@@ -152,11 +152,7 @@ class CodablePlacesStoreTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
-    
-    private var testSpecificStoreURL: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of: self)).store")
-    }
-    
+
     private func uniquePlace() -> Place {
         Place(id: UUID().uuidString,
               name: "Any NAme",
@@ -177,6 +173,22 @@ class CodablePlacesStoreTests: XCTestCase {
         }
         
         return (models, localRepresentation)
+    }
+    
+    private func setupEmptyStoreState() {
+        deleteStoreArtefacts()
+    }
+    
+    private func undoStoreSideEffect() {
+        deleteStoreArtefacts()
+    }
+    
+    private var testSpecificStoreURL: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of: self)).store")
+    }
+    
+    private func deleteStoreArtefacts() {
+        try? FileManager.default.removeItem(at: testSpecificStoreURL)
     }
 }
 
