@@ -1,6 +1,6 @@
 import Foundation
 
-public struct LocalPlace: Equatable {
+public struct LocalPlace: Equatable, Codable {
     public let id: String
     public let name: String
     public let category: String?
