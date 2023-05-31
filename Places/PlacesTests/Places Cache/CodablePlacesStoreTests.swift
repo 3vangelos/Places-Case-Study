@@ -72,9 +72,13 @@ class CodablePlacesStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
         try? FileManager.default.removeItem(at: storeURL)
+    }
+    
+    override func tearDown() {
+        super.tearDown()
         
+        try? FileManager.default.removeItem(at: storeURL)
     }
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
@@ -144,10 +148,13 @@ class CodablePlacesStoreTests: XCTestCase {
     // Mark: Helpers
     
     func makeSUT(file: StaticString = #file, line: UInt = #line) -> CodablePlacesStore {
-        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
         let sut = CodablePlacesStore(storeURL: storeURL)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private var storeURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("places.store")
     }
     
     private func uniquePlace() -> Place {
