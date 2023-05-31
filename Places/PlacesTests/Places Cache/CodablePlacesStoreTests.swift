@@ -83,96 +83,46 @@ class CodablePlacesStoreTests: XCTestCase {
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for Retrieval")
-        
-        sut.retrieve { result in
-            switch result {
-            case .empty:
-                break
-            default:
-                XCTFail("Expected empty result, got \(result) instead")
-            }
-            
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+
+        expect(sut, toRetrieve: .empty)
     }
     
     func test_retrieve_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for Retrieval")
         
-        sut.retrieve { resultFirst in
-            sut.retrieve { resultSecond in
-                switch (resultFirst, resultSecond) {
-                case (.empty, .empty):
-                    break
-                default:
-                    XCTFail("Expected empty result, got \(resultFirst) and \(resultSecond) instead")
-                }
-                
-                exp.fulfill()
-            }
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        expect(sut, toRetrieveTwice: .empty)
     }
     
     func test_retrieveAfterInsertingIntoEmptyCache_deliversEmptyValue() {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
         let timestamp = Date()
-        let exp = expectation(description: "Wait for Cache Retrieval")
         
+        let exp = expectation(description: "Wait for Cache Retrieval")
         sut.insert(places, timestamp: timestamp) { error in
             XCTAssertNil(error, "Expected Places to be inserted successfully")
-            
-            sut.retrieve { result in
-                switch (result) {
-                case let .found(retrievedPlaces, retrievedTimestamp):
-                    XCTAssertEqual(retrievedPlaces, places)
-                    XCTAssertEqual(retrievedTimestamp, timestamp)
-                default:
-                    XCTFail("Expected empty result with \(places) and \(timestamp), but got \(result) instead")
-                }
-                
-                exp.fulfill()
-            }
+            exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
+        
+        expect(sut, toRetrieve: .found(places: places, timestamp: timestamp))
     }
     
     func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
         let sut = makeSUT()
         let places = uniquePlaces().localRepresentation
         let timestamp = Date()
-        let exp = expectation(description: "Wait for Cache Retrieval")
         
+        let exp = expectation(description: "Wait for Cache Insertion")
         sut.insert(places, timestamp: timestamp) { error in
             XCTAssertNil(error, "Expected Places to be inserted successfully")
-            
-            sut.retrieve { firstResult in
-                sut.retrieve { secondResult in
-                    switch (firstResult, secondResult) {
-                    case let (.found(firstPlaces, firstTimestamp), .found(places: secondPlaces, timestamp: secondTimestamp)):
-                        XCTAssertEqual(firstPlaces, places)
-                        XCTAssertEqual(firstTimestamp, timestamp)
-                        
-                        XCTAssertEqual(secondPlaces, places)
-                        XCTAssertEqual(secondTimestamp, timestamp)
-                        
-                    default:
-                        XCTFail("Expected retrieving twice from cache: \(places) & \(timestamp), but got \(firstResult) & \(secondResult) instead")
-                    }
-                    
-                    exp.fulfill()
-                }
-            }
+            exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
+
+        expect(sut, toRetrieveTwice: .found(places: places, timestamp: timestamp))
     }
     
     
@@ -182,6 +132,34 @@ class CodablePlacesStoreTests: XCTestCase {
         let sut = CodablePlacesStore(storeURL: testSpecificStoreURL)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    func expect(_ sut: CodablePlacesStore, toRetrieveTwice expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
+        expect(sut, toRetrieve: expectedResult)
+        expect(sut, toRetrieve: expectedResult)
+    }
+
+    
+    func expect(_ sut: CodablePlacesStore, toRetrieve expectedResult: RetrievedCachedPlacesResult, file: StaticString = #file, line: UInt = #line) {
+        let exp = expectation(description: "Wait for Retrieval")
+        
+        sut.retrieve { receivedResult in
+            switch (expectedResult, receivedResult) {
+            case (.empty, .empty):
+                break
+                
+            case let (.found(expectedPlaces, expectedTimestamp), .found(retrievedPlaces, retrievedTimestamp)):
+                XCTAssertEqual(retrievedPlaces, expectedPlaces, file: file, line: line)
+                XCTAssertEqual(retrievedTimestamp, expectedTimestamp, file: file, line: line)
+                
+            default:
+                XCTFail("Expected to receive \(expectedResult), but got \(receivedResult)", file: file, line: line)
+            }
+            
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
     }
 
     private func uniquePlace() -> Place {
