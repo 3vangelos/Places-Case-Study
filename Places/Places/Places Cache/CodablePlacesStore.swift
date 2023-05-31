@@ -86,5 +86,4 @@ public class CodablePlacesStore: PlacesStore {
             completion(error)
         }
     }
-
 }
