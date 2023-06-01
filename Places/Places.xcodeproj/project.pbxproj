@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		170AB3552A27930500B64B8B /* CodablePlacesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB3542A27930500B64B8B /* CodablePlacesStore.swift */; };
+		170AB3572A285DD400B64B8B /* PlacesStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB3562A285DD400B64B8B /* PlacesStoreSpecs.swift */; };
+		170AB35A2A285EA700B64B8B /* XCTestCase+FailableDeletePlacesStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB3592A285EA700B64B8B /* XCTestCase+FailableDeletePlacesStoreSpecs.swift */; };
+		170AB35C2A285ED800B64B8B /* XCTestCase+PlacesStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB35B2A285ED800B64B8B /* XCTestCase+PlacesStoreSpecs.swift */; };
+		170AB35E2A285F0C00B64B8B /* XCTestCase+FailableInsertPlacesStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB35D2A285F0C00B64B8B /* XCTestCase+FailableInsertPlacesStoreSpecs.swift */; };
+		170AB3602A285FB200B64B8B /* XCTestCase+FailableRetrievePlacesStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB35F2A285FB200B64B8B /* XCTestCase+FailableRetrievePlacesStoreSpecs.swift */; };
+		170AB3622A2860EF00B64B8B /* PlacesCacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170AB3612A2860EF00B64B8B /* PlacesCacheTestHelpers.swift */; };
 		175088B62A25CE5300362D5C /* LocalPlacesLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */; };
 		175088BA2A25CFFA00362D5C /* GooglePlace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088B92A25CFFA00362D5C /* GooglePlace.swift */; };
 		175088BE2A25D0EF00362D5C /* PlacesStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */; };
@@ -53,6 +59,12 @@
 
 /* Begin PBXFileReference section */
 		170AB3542A27930500B64B8B /* CodablePlacesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodablePlacesStore.swift; sourceTree = "<group>"; };
+		170AB3562A285DD400B64B8B /* PlacesStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesStoreSpecs.swift; sourceTree = "<group>"; };
+		170AB3592A285EA700B64B8B /* XCTestCase+FailableDeletePlacesStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableDeletePlacesStoreSpecs.swift"; sourceTree = "<group>"; };
+		170AB35B2A285ED800B64B8B /* XCTestCase+PlacesStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+PlacesStoreSpecs.swift"; sourceTree = "<group>"; };
+		170AB35D2A285F0C00B64B8B /* XCTestCase+FailableInsertPlacesStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableInsertPlacesStoreSpecs.swift"; sourceTree = "<group>"; };
+		170AB35F2A285FB200B64B8B /* XCTestCase+FailableRetrievePlacesStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FailableRetrievePlacesStoreSpecs.swift"; sourceTree = "<group>"; };
+		170AB3612A2860EF00B64B8B /* PlacesCacheTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesCacheTestHelpers.swift; sourceTree = "<group>"; };
 		175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPlacesLoaderTests.swift; sourceTree = "<group>"; };
 		175088B92A25CFFA00362D5C /* GooglePlace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GooglePlace.swift; sourceTree = "<group>"; };
 		175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesStoreSpy.swift; sourceTree = "<group>"; };
@@ -108,9 +120,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		170AB3582A285E4A00B64B8B /* PlacesStoreSpecs */ = {
+			isa = PBXGroup;
+			children = (
+				170AB3562A285DD400B64B8B /* PlacesStoreSpecs.swift */,
+				170AB3592A285EA700B64B8B /* XCTestCase+FailableDeletePlacesStoreSpecs.swift */,
+				170AB35D2A285F0C00B64B8B /* XCTestCase+FailableInsertPlacesStoreSpecs.swift */,
+				170AB35F2A285FB200B64B8B /* XCTestCase+FailableRetrievePlacesStoreSpecs.swift */,
+				170AB35B2A285ED800B64B8B /* XCTestCase+PlacesStoreSpecs.swift */,
+			);
+			path = PlacesStoreSpecs;
+			sourceTree = "<group>";
+		};
 		175088BF2A25D1E900362D5C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				170AB3612A2860EF00B64B8B /* PlacesCacheTestHelpers.swift */,
 				175088BD2A25D0EF00362D5C /* PlacesStoreSpy.swift */,
 			);
 			path = Helpers;
@@ -212,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				175088BF2A25D1E900362D5C /* Helpers */,
+				170AB3582A285E4A00B64B8B /* PlacesStoreSpecs */,
 				17A2688E2A27107D004F34BA /* CodablePlacesStoreTests.swift */,
 				175088B52A25CE5300362D5C /* LocalPlacesLoaderTests.swift */,
 				17F331602A20AA6800ADFB07 /* LoadPlacesFromCacheTests.swift */,
@@ -404,11 +430,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				170AB35A2A285EA700B64B8B /* XCTestCase+FailableDeletePlacesStoreSpecs.swift in Sources */,
 				17F331612A20AA6800ADFB07 /* LoadPlacesFromCacheTests.swift in Sources */,
 				17C52C1F2A1D50560066BEDE /* LoadPlacesFromGoogleProviderTests.swift in Sources */,
+				170AB3572A285DD400B64B8B /* PlacesStoreSpecs.swift in Sources */,
 				17A268902A271087004F34BA /* CodablePlacesStoreTests.swift in Sources */,
+				170AB35C2A285ED800B64B8B /* XCTestCase+PlacesStoreSpecs.swift in Sources */,
 				175088BE2A25D0EF00362D5C /* PlacesStoreSpy.swift in Sources */,
 				175088B62A25CE5300362D5C /* LocalPlacesLoaderTests.swift in Sources */,
+				170AB3602A285FB200B64B8B /* XCTestCase+FailableRetrievePlacesStoreSpecs.swift in Sources */,
+				170AB35E2A285F0C00B64B8B /* XCTestCase+FailableInsertPlacesStoreSpecs.swift in Sources */,
+				170AB3622A2860EF00B64B8B /* PlacesCacheTestHelpers.swift in Sources */,
 				17C52C3B2A1E56EC0066BEDE /* URLSessionHTTPClientTests.swift in Sources */,
 				17C3862F2A264D830007DD1F /* ValidatePlacesCacheTests.swift in Sources */,
 				17F6F92D2A1E9BD20087401A /* XCTestCase+MemoryLeakTracking.swift in Sources */,

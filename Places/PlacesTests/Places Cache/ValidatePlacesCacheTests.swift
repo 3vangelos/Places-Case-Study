@@ -25,7 +25,7 @@ class ValidatePlacesCacheTests: XCTestCase {
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.validateCache()
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expirationTimestamp)
+        store.completeRetrieval(with: expectedPlaces.local, timestamp: expirationTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
@@ -37,7 +37,7 @@ class ValidatePlacesCacheTests: XCTestCase {
         let (sut, store) = makeSUT(currentDate: { fixedCurrentDate })
 
         sut.validateCache()
-        store.completeRetrieval(with: expectedPlaces.localRepresentation, timestamp: expiredTimestamp)
+        store.completeRetrieval(with: expectedPlaces.local, timestamp: expiredTimestamp)
         
         XCTAssertEqual(store.receivedMessages, [.retrieve, .deleteCachedPlaces])
     }
@@ -65,31 +65,5 @@ class ValidatePlacesCacheTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
-    }
-    
-    private var anyError: Error {
-        NSError(domain: "Any Error", code: 1)
-    }
-    
-    private func uniquePlace() -> Place {
-        Place(id: UUID().uuidString,
-              name: "Any NAme",
-              category: nil,
-              imageUrl: nil,
-              location: Location(latitude: 1,
-                                 longitude: 1))
-    }
-    
-    private func uniquePlaces() -> (models: [Place], localRepresentation: [LocalPlace]) {
-        let models = [uniquePlace(), uniquePlace()]
-        let localRepresentation = models.map { place in
-            LocalPlace(id: place.id,
-                       name: place.name,
-                       category: place.category,
-                       imageUrl: place.imageUrl,
-                       location: place.location)
-        }
-        
-        return (models, localRepresentation)
     }
 }

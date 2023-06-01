@@ -1,6 +1,6 @@
 import Foundation
 
-public enum RetrievedCachedPlacesResult {
+public enum RetrieveCachedPlacesResult {
     case empty
     case found(places: [LocalPlace], timestamp: Date)
     case failure(Error)
@@ -9,7 +9,7 @@ public enum RetrievedCachedPlacesResult {
 public protocol PlacesStore {
     typealias DeletionCompletion = (Error?) -> Void
     typealias InsertionCompletion = (Error?) -> Void
-    typealias RetrievalCompletion = (RetrievedCachedPlacesResult) -> Void
+    typealias RetrievalCompletion = (RetrieveCachedPlacesResult) -> Void
     
     /// The completion handler can be invoked in any thread.
     /// Clients are responsible to dispatch to appropriate threads, if needed

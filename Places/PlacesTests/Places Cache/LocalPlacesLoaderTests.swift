@@ -35,14 +35,14 @@ class LocalPlacesLoaderTests: XCTestCase {
         sut.save(places.models) { _ in }
         store.completeDeletionSuccessfully()
         
-        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places.localRepresentation, timestamp)])
+        XCTAssertEqual(store.receivedMessages, [.deleteCachedPlaces, .insert(places.local, timestamp)])
     }
 
     func test_save_failsOnDeletionError() {
         let (sut, store) = makeSUT()
         let deletionError = anyError
         
-        expect(sut, toCompleteWith: deletionError) {
+        expect(sut, toCompleteWith: deletionError as NSError?) {
             store.completeDeletion(with: deletionError)
         }
     }
@@ -51,7 +51,7 @@ class LocalPlacesLoaderTests: XCTestCase {
         let (sut, store) = makeSUT()
         let insertionError = anyError
         
-        expect(sut, toCompleteWith: insertionError) {
+        expect(sut, toCompleteWith: insertionError as NSError?) {
             store.completeDeletionSuccessfully()
             store.completeInsertion(with: insertionError)
         }
@@ -120,32 +120,5 @@ class LocalPlacesLoaderTests: XCTestCase {
             
         wait(for: [exp], timeout: 1.0)
         XCTAssertEqual(receivedError as NSError?, expectedError, file: file, line: line)
-    }
-    
-    private func uniquePlace() -> Place {
-        Place(id: UUID().uuidString,
-              name: "Any NAme",
-              category: nil,
-              imageUrl: nil,
-              location: Location(latitude: 1,
-                                 longitude: 1))
-    }
-    
-    private func uniquePlaces() -> (models: [Place], localRepresentation: [LocalPlace]) {
-        let models = [uniquePlace(), uniquePlace()]
-        let localRepresentation = models.map { place in
-            LocalPlace(id: place.id,
-                       name: place.name,
-                       category: place.category,
-                       imageUrl: place.imageUrl,
-                       location: place.location)
-        }
-        
-        return (models, localRepresentation)
-    }
-    
-    
-    private var anyError: NSError {
-        NSError(domain: "Any Error", code: 1)
     }
 }
